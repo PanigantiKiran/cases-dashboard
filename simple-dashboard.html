@@ -2,304 +2,108 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Case Analytics - Product Selection</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <title>May 2026 Cases Dashboard</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.js"></script>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
-        
         body {
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 50%, #7e8ba3 100%);
-            min-height: 100vh;
-            padding: 40px 20px;
-        }
-        
-        .container {
-            background: #ffffff;
-            max-width: 1200px;
-            margin: 0 auto;
-            border-radius: 16px;
-            overflow: hidden;
-            box-shadow: 0 24px 48px rgba(0, 0, 0, 0.15);
-        }
-        
-        .header {
-            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
-            padding: 50px 40px;
-            color: white;
-            position: relative;
-            overflow: hidden;
-        }
-        
-        .header::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            right: 0;
-            width: 400px;
-            height: 400px;
-            background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
-            border-radius: 50%;
-        }
-        
-        .header h1 {
-            font-size: 2.5em;
-            font-weight: 700;
-            margin-bottom: 10px;
-            position: relative;
-            letter-spacing: -0.5px;
-        }
-        
-        .header p {
-            font-size: 1.1em;
-            opacity: 0.9;
-            position: relative;
-            font-weight: 400;
-        }
-        
-        .stats-bar {
-            display: flex;
-            background: #f8f9fa;
-            padding: 30px 40px;
-            gap: 40px;
-            border-bottom: 1px solid #e9ecef;
-        }
-        
-        .stat-item {
-            flex: 1;
-            text-align: center;
-        }
-        
-        .stat-value {
-            font-size: 2.5em;
-            font-weight: 700;
-            color: #1e3c72;
-            margin-bottom: 5px;
-        }
-        
-        .stat-label {
-            color: #6c757d;
-            font-size: 0.9em;
-            font-weight: 500;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-        
-        .content {
-            padding: 40px;
-        }
-        
-        .section-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 30px;
-        }
-        
-        .section-header h2 {
-            font-size: 1.5em;
-            color: #1e3c72;
-            font-weight: 600;
-        }
-        
-        .select-buttons {
-            display: flex;
-            gap: 10px;
-        }
-        
-        .btn-small {
-            padding: 8px 16px;
-            border: 1px solid #dee2e6;
-            background: white;
-            color: #495057;
-            border-radius: 6px;
-            cursor: pointer;
-            font-size: 0.9em;
-            font-weight: 500;
-            transition: all 0.2s;
-        }
-        
-        .btn-small:hover {
-            border-color: #1e3c72;
-            color: #1e3c72;
-            background: #f8f9fa;
-        }
-        
-        .products-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-            gap: 20px;
-            margin-bottom: 40px;
-        }
-        
-        .product-card {
-            background: white;
-            border: 2px solid #e9ecef;
-            border-radius: 12px;
-            padding: 24px;
-            cursor: pointer;
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            position: relative;
-            overflow: hidden;
-        }
-        
-        .product-card::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 4px;
-            background: linear-gradient(90deg, #1e3c72, #2a5298);
-            transform: scaleX(0);
-            transition: transform 0.3s;
-        }
-        
-        .product-card:hover {
-            border-color: #1e3c72;
-            box-shadow: 0 8px 24px rgba(30, 60, 114, 0.12);
-            transform: translateY(-4px);
-        }
-        
-        .product-card:hover::before {
-            transform: scaleX(1);
-        }
-        
-        .product-card.selected {
-            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
-            border-color: #1e3c72;
-            color: white;
-            transform: translateY(-4px);
-            box-shadow: 0 12px 32px rgba(30, 60, 114, 0.25);
-        }
-        
-        .product-card.selected::before {
-            background: white;
-            transform: scaleX(1);
-        }
-        
-        .product-name {
-            font-weight: 600;
-            font-size: 1.1em;
-            margin-bottom: 8px;
-            line-height: 1.4;
-        }
-        
-        .product-count {
-            font-size: 0.9em;
-            opacity: 0.7;
-            font-weight: 500;
-        }
-        
-        .selected-info {
-            text-align: center;
+            font-family: 'Segoe UI', Arial, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             padding: 20px;
-            background: #f8f9fa;
-            border-radius: 8px;
-            margin-bottom: 30px;
-            color: #495057;
-            font-weight: 500;
         }
-        
-        .selected-info span {
-            color: #1e3c72;
-            font-weight: 700;
-        }
-        
-        .action-bar {
-            display: flex;
-            gap: 15px;
-            justify-content: center;
-            padding: 30px 40px;
-            background: #f8f9fa;
-            border-top: 1px solid #e9ecef;
-        }
-        
-        .btn {
-            padding: 14px 32px;
-            border: none;
-            border-radius: 8px;
-            font-size: 1.05em;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s;
-            font-family: inherit;
-        }
-        
-        .btn-primary {
-            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
-            color: white;
-            box-shadow: 0 4px 12px rgba(30, 60, 114, 0.3);
-        }
-        
-        .btn-primary:hover:not(:disabled) {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(30, 60, 114, 0.4);
-        }
-        
-        .btn-primary:disabled {
-            opacity: 0.5;
-            cursor: not-allowed;
-        }
-        
-        .btn-secondary {
+        .container { max-width: 1600px; margin: 0 auto; }
+        .header {
             background: white;
-            color: #495057;
-            border: 2px solid #dee2e6;
+            padding: 30px;
+            border-radius: 15px;
+            margin-bottom: 30px;
+            text-align: center;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
         }
-        
-        .btn-secondary:hover {
-            border-color: #1e3c72;
-            color: #1e3c72;
+        .header h1 { color: #667eea; font-size: 2.5em; margin-bottom: 10px; }
+        .status { padding: 15px; margin: 10px 0; border-radius: 8px; }
+        .success { background: #d4edda; color: #155724; }
+        .error { background: #f8d7da; color: #721c24; }
+        .metrics {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
         }
+        .metric-card {
+            background: white;
+            padding: 25px;
+            border-radius: 12px;
+            text-align: center;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+        .metric-value {
+            font-size: 3em;
+            font-weight: bold;
+            color: #667eea;
+        }
+        .metric-label {
+            color: #666;
+            font-size: 1.1em;
+            margin-top: 10px;
+        }
+        table {
+            width: 100%;
+            background: white;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+        th {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 15px;
+            text-align: left;
+        }
+        td {
+            padding: 12px 15px;
+            border-bottom: 1px solid #e0e0e0;
+        }
+        tr:hover { background: #f8f9ff; }
     </style>
 </head>
 <body>
     <div class="container">
         <div class="header">
-            <h1>Case Analytics Dashboard</h1>
-            <p>Thomson Reuters - May 2026 Reporting Period</p>
+            <h1>📊 May 2026 Cases Dashboard</h1>
+            <div id="status" class="status">Loading...</div>
         </div>
 
-        <div class="stats-bar">
-            <div class="stat-item">
-                <div class="stat-value" id="totalCases">134</div>
-                <div class="stat-label">Total Cases</div>
+        <div class="metrics">
+            <div class="metric-card">
+                <div class="metric-value" id="totalCases">0</div>
+                <div class="metric-label">Total Cases</div>
             </div>
-            <div class="stat-item">
-                <div class="stat-value" id="totalProducts">0</div>
-                <div class="stat-label">Products</div>
+            <div class="metric-card">
+                <div class="metric-value" id="openCases">0</div>
+                <div class="metric-label">Open Cases</div>
             </div>
-            <div class="stat-item">
-                <div class="stat-value" id="selectedCount">0</div>
-                <div class="stat-label">Selected</div>
-            </div>
-        </div>
-
-        <div class="content">
-            <div class="section-header">
-                <h2>Select Products for Analysis</h2>
-                <div class="select-buttons">
-                    <button class="btn-small" onclick="selectAll()">Select All</button>
-                    <button class="btn-small" onclick="clearAll()">Clear All</button>
-                </div>
-            </div>
-
-            <div id="products" class="products-grid"></div>
-
-            <div class="selected-info">
-                <span id="selectedText">No products selected</span>
+            <div class="metric-card">
+                <div class="metric-value" id="closedCases">0</div>
+                <div class="metric-label">Closed Cases</div>
             </div>
         </div>
 
-        <div class="action-bar">
-            <button class="btn btn-primary" id="viewBtn" onclick="viewDashboard()" disabled>
-                View Dashboard →
-            </button>
-            <button class="btn btn-secondary" onclick="viewAllCases()">
-                View All Cases
-            </button>
+        <div style="background: white; padding: 25px; border-radius: 12px; box-shadow: 0 5px 15px rgba(0,0,0,0.1);">
+            <h2 style="color: #667eea; margin-bottom: 20px;">All Cases</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Case #</th>
+                        <th>Account</th>
+                        <th>Product</th>
+                        <th>Status</th>
+                        <th>Priority</th>
+                        <th>Opened</th>
+                    </tr>
+                </thead>
+                <tbody id="tableBody"></tbody>
+            </table>
         </div>
     </div>
 
@@ -442,79 +246,36 @@
 ];
 
 
-    let selectedProducts = new Set();
-    const productsDiv = document.getElementById('products');
-    const viewBtn = document.getElementById('viewBtn');
-
-    // Count products
-    const productCounts = {};
-    casesData.forEach(c => {
-        productCounts[c.product] = (productCounts[c.product] || 0) + 1;
-    });
-
-    const sortedProducts = Object.entries(productCounts).sort((a, b) => b[1] - a[1]);
+    const statusDiv = document.getElementById('status');
     
-    document.getElementById('totalProducts').textContent = sortedProducts.length;
-    document.getElementById('totalCases').textContent = casesData.length;
+    // Check data
+    if (typeof casesData === 'undefined' || !casesData || casesData.length === 0) {
+        statusDiv.className = 'status error';
+        statusDiv.textContent = 'ERROR: No data loaded! casesData = ' + typeof casesData;
+        console.error('Data loading failed');
+    } else {
+        statusDiv.className = 'status success';
+        statusDiv.textContent = '✓ Successfully loaded ' + casesData.length + ' cases';
+        
+        // Update metrics
+        document.getElementById('totalCases').textContent = casesData.length;
+        const closed = casesData.filter(c => c.status === 'Closed').length;
+        document.getElementById('closedCases').textContent = closed;
+        document.getElementById('openCases').textContent = casesData.length - closed;
 
-    // Create product cards
-    sortedProducts.forEach(([product, count]) => {
-        const card = document.createElement('div');
-        card.className = 'product-card';
-        card.onclick = () => toggleProduct(product, card);
-        card.innerHTML = '<div class="product-name">' + product + '</div><div class="product-count">' + count + ' cases</div>';
-        productsDiv.appendChild(card);
-    });
+        // Populate table
+        const tbody = document.getElementById('tableBody');
+        casesData.slice(0, 50).forEach(c => {
+            const row = tbody.insertRow();
+            row.innerHTML = '<td><strong>' + c.caseNumber + '</strong></td>' +
+                          '<td>' + c.account.substring(0, 30) + '</td>' +
+                          '<td>' + c.product + '</td>' +
+                          '<td>' + c.status + '</td>' +
+                          '<td>' + c.priority + '</td>' +
+                          '<td>' + c.openedDate + '</td>';
+        });
 
-    function toggleProduct(product, card) {
-        if (selectedProducts.has(product)) {
-            selectedProducts.delete(product);
-            card.classList.remove('selected');
-        } else {
-            selectedProducts.add(product);
-            card.classList.add('selected');
-        }
-        updateSelectedCount();
-    }
-
-    function updateSelectedCount() {
-        const count = selectedProducts.size;
-        document.getElementById('selectedCount').textContent = count;
-        const selectedText = document.getElementById('selectedText');
-        if (count === 0) {
-            selectedText.innerHTML = 'No products selected';
-        } else if (count === 1) {
-            selectedText.innerHTML = '<span>1</span> product selected';
-        } else {
-            selectedText.innerHTML = '<span>' + count + '</span> products selected';
-        }
-        viewBtn.disabled = count === 0;
-    }
-
-    function selectAll() {
-        selectedProducts = new Set(Object.keys(productCounts));
-        document.querySelectorAll('.product-card').forEach(card => card.classList.add('selected'));
-        updateSelectedCount();
-    }
-
-    function clearAll() {
-        selectedProducts.clear();
-        document.querySelectorAll('.product-card').forEach(card => card.classList.remove('selected'));
-        updateSelectedCount();
-    }
-
-    function viewDashboard() {
-        if (selectedProducts.size === 0) {
-            alert('Please select at least one product');
-            return;
-        }
-        localStorage.setItem('selectedProducts', JSON.stringify([...selectedProducts]));
-        window.location.href = 'professional-dashboard.html';
-    }
-
-    function viewAllCases() {
-        localStorage.removeItem('selectedProducts');
-        window.location.href = 'professional-dashboard.html';
+        console.log('Dashboard loaded successfully with', casesData.length, 'cases');
     }
     </script>
 </body>

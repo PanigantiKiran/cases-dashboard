@@ -1,0 +1,11 @@
+Case ID,Date Opened,Customer Name,Error Code,Issue Category,Priority,Status,Assigned To,Description,Resolution,Date Resolved,Time Spent (hrs),Notes
+CASE-001,2026-05-15,Acme Corp,CMN.ATO.INCDTLS.000391,Validation Error,High,Resolved,Gandhi,Trust income schedule error at item 13S,Instructed client to enter zero value at item 13S,2026-05-15,0.5,Client followed steps successfully
+CASE-002,2026-05-16,Tech Solutions Inc,AUTH-TIMEOUT-500,Authentication,Medium,Resolved,Gandhi,User experiencing session timeout repeatedly,Cleared cache and synchronized system time,2026-05-16,1.2,Issue was caused by incorrect system clock
+CASE-003,2026-05-18,Global Systems Ltd,DB-CONN-ERROR,Database,Critical,In Progress,Gandhi,Cannot connect to production database,Checking firewall settings and credentials,,,2.5,Escalated to infrastructure team
+CASE-004,2026-05-19,StartUp XYZ,,Installation,Low,Open,Gandhi,Software installation fails on Windows 11,,,0.3,Waiting for client to provide error logs
+CASE-005,2026-05-20,Acme Corp,FILE-404,File System,Medium,Waiting on Client,Gandhi,File not found error in reports module,Requested file path verification from client,,,0.8,Client needs to check permissions
+CASE-006,2026-05-21,Enterprise Co,PERF-SLOW,Performance,Medium,Open,Gandhi,Application running slowly since update,,,0.5,Need to check system requirements
+CASE-007,2026-05-22,Tech Solutions Inc,ERR-500,Server Error,High,In Progress,Gandhi,Internal server error on checkout page,Investigating server logs,,,1.5,Issue intermittent - monitoring
+CASE-008,2026-05-23,Global Systems Ltd,,Password Recovery,Low,Resolved,Gandhi,User cannot access account - forgot password,Sent password reset link to verified email,2026-05-23,0.3,User successfully reset password
+CASE-009,2026-05-24,StartUp XYZ,CMN.ATO.INCDTLS.000391,Validation Error,Medium,Open,Gandhi,Same validation error as CASE-001,,,0.2,Will apply same resolution
+CASE-010,2026-05-26,New Client LLC,AUTH-TIMEOUT-500,Authentication,High,Open,Gandhi,Recurring timeout issues affecting multiple users,,,0.5,Investigating if server-side issue

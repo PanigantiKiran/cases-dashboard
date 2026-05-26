@@ -152,6 +152,8 @@
             padding: 15px 10px;
             text-align: left;
             font-weight: 600;
+            position: sticky;
+            top: 0;
         }
 
         td {
@@ -187,18 +189,22 @@
             color: #666;
             box-shadow: 0 5px 15px rgba(0,0,0,0.1);
         }
+
+        @media (max-width: 768px) {
+            .charts-grid {
+                grid-template-columns: 1fr;
+            }
+            .metrics-grid {
+                grid-template-columns: 1fr;
+            }
+        }
     </style>
 </head>
 <body>
     <div class="dashboard-container">
         <div class="header">
             <h1>May 2026 Cases Dashboard</h1>
-            <p id="headerSubtitle">Case Analysis for Prabhukiran Paniganti | Generated: May 26, 2026</p>
-            <div style="margin-top: 15px;">
-                <button onclick="goBackToSelection()" style="padding: 10px 25px; background: white; color: #667eea; border: 2px solid #667eea; border-radius: 8px; font-size: 1em; font-weight: 600; cursor: pointer; transition: all 0.3s ease;">
-                    ← Change Products
-                </button>
-            </div>
+            <p>Case Analysis for Prabhukiran Paniganti | Generated: May 26, 2026</p>
         </div>
 
         <div class="metrics-grid">
@@ -255,25 +261,8 @@
         </div>
 
         <div class="table-card">
-            <h3>All Cases (<span id="caseCount">0</span> total)</h3>
-            <div style="display: flex; gap: 15px; margin-bottom: 20px;">
-                <select id="productFilter" style="flex: 1; padding: 12px 20px; border: 2px solid #e0e0e0; border-radius: 8px; font-size: 1em; background: white; cursor: pointer;">
-                    <option value="">All Products</option>
-                </select>
-                <select id="statusFilter" style="flex: 1; padding: 12px 20px; border: 2px solid #e0e0e0; border-radius: 8px; font-size: 1em; background: white; cursor: pointer;">
-                    <option value="">All Statuses</option>
-                    <option value="Closed">Closed</option>
-                    <option value="Work In Progress">Work In Progress</option>
-                    <option value="Fix Applied">Fix Applied</option>
-                </select>
-                <select id="priorityFilter" style="flex: 1; padding: 12px 20px; border: 2px solid #e0e0e0; border-radius: 8px; font-size: 1em; background: white; cursor: pointer;">
-                    <option value="">All Priorities</option>
-                    <option value="High">High</option>
-                    <option value="Medium">Medium</option>
-                    <option value="3 - Low">Low</option>
-                </select>
-            </div>
-            <input type="text" id="searchBox" placeholder="Search cases by number, account, or subject...">
+            <h3>All Cases</h3>
+            <input type="text" id="searchBox" placeholder="Search cases by number, account, product, or subject...">
             <div style="overflow-x: auto;">
                 <table id="casesTable">
                     <thead>
@@ -295,57 +284,65 @@
         </div>
 
         <div class="footer">
-            <p>Dashboard created with Chart.js | Data from May 2026 Cases</p>
+            <p>Dashboard created with Chart.js | Data exported from cases of May.xlsx</p>
         </div>
     </div>
 
-    <script src="cases-data-embedded.js"></script>
     <script>
-        console.log('Total cases loaded:', casesData.length);
+        // Load and parse CSV data
+        let casesData = [];
 
-        // Filter data based on selected products
-        let originalCasesData = [...casesData]; // Keep original copy
-        let filteredCasesData = casesData;
-        const selectedProductsJSON = localStorage.getItem('selectedProducts');
-
-        console.log('Selected products from storage:', selectedProductsJSON);
-
-        if (selectedProductsJSON) {
+        async function loadData() {
             try {
-                const selectedProducts = JSON.parse(selectedProductsJSON);
-                console.log('Parsed selected products:', selectedProducts);
+                const response = await fetch('cases-may-data.csv');
+                const csvText = await response.text();
+                const lines = csvText.split('\n');
 
-                if (selectedProducts && selectedProducts.length > 0) {
-                    filteredCasesData = originalCasesData.filter(c => selectedProducts.includes(c.product));
-                    console.log('Filtered cases count:', filteredCasesData.length);
+                console.log('Total lines:', lines.length);
 
-                    // Update header to show selected products
-                    const subtitle = document.getElementById('headerSubtitle');
-                    if (selectedProducts.length === 1) {
-                        subtitle.textContent = `Showing: ${selectedProducts[0]}`;
-                    } else if (selectedProducts.length <= 3) {
-                        subtitle.textContent = `Showing: ${selectedProducts.join(', ')}`;
-                    } else {
-                        subtitle.textContent = `Showing ${selectedProducts.length} selected products`;
+                // Parse CSV (skip header row at index 0)
+                for (let i = 1; i < lines.length; i++) {
+                    const line = lines[i].trim();
+                    if (!line) continue;
+
+                    // Split by comma but respect quoted fields
+                    const match = line.match(/"([^"]*)"(?:,|$)/g);
+                    if (!match || match.length < 20) continue;
+
+                    const cells = match.map(cell => cell.replace(/^"|"$/g, '').replace(/""/g, '"').trim());
+
+                    // Skip if case number is empty or contains "Total" or "Confidential"
+                    if (!cells[3] || cells[1].includes('Total') || cells[1].includes('Confidential')) continue;
+
+                    const caseData = {
+                        caseNumber: cells[3],
+                        account: cells[6],
+                        product: cells[7],
+                        category: cells[8],
+                        subject: cells[9],
+                        status: cells[10],
+                        openedDate: cells[12],
+                        priority: cells[16],
+                        ageHours: parseFloat(cells[18]) || 0,
+                        ageDays: parseInt(cells[19]) || 0,
+                        sla: cells[15]
+                    };
+
+                    // Only add valid cases
+                    if (caseData.caseNumber && caseData.account) {
+                        casesData.push(caseData);
                     }
-                    subtitle.style.fontWeight = 'bold';
-                    subtitle.style.color = '#667eea';
-                } else {
-                    console.log('No products selected, showing all');
                 }
-            } catch (e) {
-                console.error('Error parsing selected products:', e);
+
+                console.log('Loaded cases:', casesData.length);
+            } catch (error) {
+                console.error('Error loading data:', error);
+                alert('Error loading case data. Please check the console for details.');
             }
-        } else {
-            console.log('No selected products in localStorage, showing all cases');
-        }
 
-        // Use filtered data
-        casesData = filteredCasesData;
-        console.log('Final casesData length:', casesData.length);
-
-        function goBackToSelection() {
-            window.location.href = 'select-products.html';
+            calculateMetrics();
+            renderCharts();
+            renderTable();
         }
 
         function calculateMetrics() {
@@ -353,22 +350,21 @@
             const closed = casesData.filter(c => c.status === 'Closed').length;
             const open = total - closed;
 
-            // Calculate average resolution time
+            // Calculate average resolution time (for closed cases)
             const closedWithAge = casesData.filter(c => c.status === 'Closed' && c.ageHours > 0);
-            const avgHours = closedWithAge.length > 0 ?
-                closedWithAge.reduce((sum, c) => sum + c.ageHours, 0) / closedWithAge.length : 0;
+            const avgHours = closedWithAge.reduce((sum, c) => sum + c.ageHours, 0) / (closedWithAge.length || 1);
 
             // SLA Compliance
             const withSLA = casesData.filter(c => c.sla && c.sla.includes('days'));
-            const compliant = withSLA.length;
-            const slaRate = total > 0 ? (compliant / total * 100).toFixed(1) : 0;
+            const compliant = withSLA.filter(c => c.sla.toLowerCase().includes('compliant') ||
+                                                   !c.sla.toLowerCase().includes('non-compliant')).length;
+            const slaRate = withSLA.length > 0 ? (compliant / withSLA.length * 100).toFixed(1) : 0;
 
             document.getElementById('totalCases').textContent = total;
             document.getElementById('openCases').textContent = open;
             document.getElementById('closedCases').textContent = closed;
             document.getElementById('avgResolution').textContent = `${avgHours.toFixed(1)}h`;
             document.getElementById('slaCompliance').textContent = `${slaRate}%`;
-            document.getElementById('caseCount').textContent = total;
         }
 
         function renderCharts() {
@@ -511,18 +507,15 @@
                 else if (c.status === 'Fix Applied') statusClass = 'status-fix';
 
                 let priorityClass = '';
-                if (c.priority && (c.priority.includes('High') || c.priority === '1')) priorityClass = 'priority-high';
-                else if (c.priority && (c.priority.includes('Medium') || c.priority === '2')) priorityClass = 'priority-medium';
+                if (c.priority.includes('High') || c.priority === '1') priorityClass = 'priority-high';
+                else if (c.priority.includes('Medium') || c.priority === '2') priorityClass = 'priority-medium';
                 else priorityClass = 'priority-low';
-
-                const accountShort = c.account.length > 30 ? c.account.substring(0, 30) + '...' : c.account;
-                const subjectShort = c.subject.length > 50 ? c.subject.substring(0, 50) + '...' : c.subject;
 
                 row.innerHTML = `
                     <td><strong>${c.caseNumber}</strong></td>
-                    <td>${accountShort}</td>
+                    <td>${c.account.substring(0, 30)}${c.account.length > 30 ? '...' : ''}</td>
                     <td>${c.product}</td>
-                    <td>${subjectShort}</td>
+                    <td>${c.subject.substring(0, 50)}${c.subject.length > 50 ? '...' : ''}</td>
                     <td><span class="status-badge ${statusClass}">${c.status}</span></td>
                     <td class="${priorityClass}">${c.priority}</td>
                     <td>${c.openedDate}</td>
@@ -532,58 +525,20 @@
             });
         }
 
-        // Populate product filter
-        function populateProductFilter() {
-            const products = [...new Set(casesData.map(c => c.product))].sort();
-            const productFilter = document.getElementById('productFilter');
-            products.forEach(product => {
-                const option = document.createElement('option');
-                option.value = product;
-                option.textContent = `${product} (${casesData.filter(c => c.product === product).length})`;
-                productFilter.appendChild(option);
-            });
-        }
-
-        // Get filtered data based on all filters
-        function getFilteredData() {
-            const searchTerm = document.getElementById('searchBox').value.toLowerCase();
-            const productFilter = document.getElementById('productFilter').value;
-            const statusFilter = document.getElementById('statusFilter').value;
-            const priorityFilter = document.getElementById('priorityFilter').value;
-
-            return casesData.filter(c => {
-                const matchesSearch = !searchTerm ||
-                    c.caseNumber.toLowerCase().includes(searchTerm) ||
-                    c.account.toLowerCase().includes(searchTerm) ||
-                    c.subject.toLowerCase().includes(searchTerm);
-
-                const matchesProduct = !productFilter || c.product === productFilter;
-                const matchesStatus = !statusFilter || c.status === statusFilter;
-                const matchesPriority = !priorityFilter || c.priority.includes(priorityFilter);
-
-                return matchesSearch && matchesProduct && matchesStatus && matchesPriority;
-            });
-        }
-
-        // Update everything when filters change
-        function applyFilters() {
-            const filtered = getFilteredData();
-            renderTable(filtered);
-            document.getElementById('caseCount').textContent = filtered.length;
-        }
-
         // Search functionality
-        document.getElementById('searchBox').addEventListener('input', applyFilters);
-        document.getElementById('productFilter').addEventListener('change', applyFilters);
-        document.getElementById('statusFilter').addEventListener('change', applyFilters);
-        document.getElementById('priorityFilter').addEventListener('change', applyFilters);
+        document.getElementById('searchBox').addEventListener('input', (e) => {
+            const searchTerm = e.target.value.toLowerCase();
+            const filtered = casesData.filter(c =>
+                c.caseNumber.toLowerCase().includes(searchTerm) ||
+                c.account.toLowerCase().includes(searchTerm) ||
+                c.product.toLowerCase().includes(searchTerm) ||
+                c.subject.toLowerCase().includes(searchTerm)
+            );
+            renderTable(filtered);
+        });
 
         // Initialize
-        console.log('Loaded cases:', casesData.length);
-        populateProductFilter();
-        calculateMetrics();
-        renderCharts();
-        renderTable();
+        loadData();
     </script>
 </body>
 </html>

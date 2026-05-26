@@ -1,0 +1,42 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <title>Data Test</title>
+    <style>
+        body { font-family: Arial; padding: 20px; background: #f5f5f5; }
+        .success { color: green; font-weight: bold; }
+        .error { color: red; font-weight: bold; }
+        pre { background: white; padding: 15px; border-radius: 8px; }
+    </style>
+</head>
+<body>
+    <h1>Data Loading Test</h1>
+    <div id="status">Loading...</div>
+    <div id="details"></div>
+    
+    <script src="cases-data-embedded.js"></script>
+    <script>
+        const status = document.getElementById('status');
+        const details = document.getElementById('details');
+        
+        if (typeof casesData !== 'undefined') {
+            status.innerHTML = '<div class="success">✓ Data loaded successfully!</div>';
+            details.innerHTML = `
+                <h2>Data Summary:</h2>
+                <ul>
+                    <li>Total cases: <strong>${casesData.length}</strong></li>
+                    <li>First case: ${casesData[0].caseNumber} - ${casesData[0].account}</li>
+                    <li>Last case: ${casesData[casesData.length-1].caseNumber}</li>
+                </ul>
+                <h3>Products found:</h3>
+                <pre>${[...new Set(casesData.map(c => c.product))].join('\n')}</pre>
+                <h3>First 3 cases:</h3>
+                <pre>${JSON.stringify(casesData.slice(0, 3), null, 2)}</pre>
+            `;
+        } else {
+            status.innerHTML = '<div class="error">✗ Data NOT loaded!</div>';
+            details.innerHTML = '<p>casesData is undefined - file not loading</p>';
+        }
+    </script>
+</body>
+</html>

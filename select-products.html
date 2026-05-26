@@ -274,13 +274,32 @@
 
     <script src="cases-data-embedded.js"></script>
     <script>
+        // Debug logging
+        console.log('=== SELECT PRODUCTS PAGE DEBUG ===');
+        console.log('casesData exists:', typeof casesData !== 'undefined');
+        console.log('casesData length:', typeof casesData !== 'undefined' ? casesData.length : 'UNDEFINED');
+
+        if (typeof casesData === 'undefined') {
+            alert('ERROR: Data file not loaded! Check browser console.');
+            document.body.innerHTML = '<div style="color:red; padding:40px; text-align:center;"><h1>ERROR: Data Not Loaded</h1><p>Press F12 to see console</p></div>';
+        }
+
         let selectedProducts = new Set();
 
         function loadProducts() {
+            if (typeof casesData === 'undefined') {
+                console.error('casesData is undefined in loadProducts()');
+                return;
+            }
+
+            console.log('Loading products from', casesData.length, 'cases');
+
             const productCounts = {};
             casesData.forEach(c => {
                 productCounts[c.product] = (productCounts[c.product] || 0) + 1;
             });
+
+            console.log('Product counts:', productCounts);
 
             const sortedProducts = Object.entries(productCounts)
                 .sort((a, b) => b[1] - a[1]);
@@ -306,6 +325,14 @@
 
             document.getElementById('totalProducts').textContent = sortedProducts.length;
             document.getElementById('totalCases').textContent = casesData.length;
+
+            console.log('Products loaded:', sortedProducts.length);
+            console.log('Grid children:', grid.children.length);
+
+            if (grid.children.length === 0) {
+                console.error('ERROR: No products were added to the grid!');
+                grid.innerHTML = '<div style="padding: 40px; text-align: center; color: red;"><h2>ERROR: No products found</h2><p>Check console for details</p></div>';
+            }
         }
 
         function toggleProduct(product, element) {

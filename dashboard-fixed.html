@@ -193,12 +193,7 @@
     <div class="dashboard-container">
         <div class="header">
             <h1>May 2026 Cases Dashboard</h1>
-            <p id="headerSubtitle">Case Analysis for Prabhukiran Paniganti | Generated: May 26, 2026</p>
-            <div style="margin-top: 15px;">
-                <button onclick="goBackToSelection()" style="padding: 10px 25px; background: white; color: #667eea; border: 2px solid #667eea; border-radius: 8px; font-size: 1em; font-weight: 600; cursor: pointer; transition: all 0.3s ease;">
-                    ← Change Products
-                </button>
-            </div>
+            <p>Case Analysis for Prabhukiran Paniganti | Generated: May 26, 2026</p>
         </div>
 
         <div class="metrics-grid">
@@ -301,53 +296,6 @@
 
     <script src="cases-data-embedded.js"></script>
     <script>
-        console.log('Total cases loaded:', casesData.length);
-
-        // Filter data based on selected products
-        let originalCasesData = [...casesData]; // Keep original copy
-        let filteredCasesData = casesData;
-        const selectedProductsJSON = localStorage.getItem('selectedProducts');
-
-        console.log('Selected products from storage:', selectedProductsJSON);
-
-        if (selectedProductsJSON) {
-            try {
-                const selectedProducts = JSON.parse(selectedProductsJSON);
-                console.log('Parsed selected products:', selectedProducts);
-
-                if (selectedProducts && selectedProducts.length > 0) {
-                    filteredCasesData = originalCasesData.filter(c => selectedProducts.includes(c.product));
-                    console.log('Filtered cases count:', filteredCasesData.length);
-
-                    // Update header to show selected products
-                    const subtitle = document.getElementById('headerSubtitle');
-                    if (selectedProducts.length === 1) {
-                        subtitle.textContent = `Showing: ${selectedProducts[0]}`;
-                    } else if (selectedProducts.length <= 3) {
-                        subtitle.textContent = `Showing: ${selectedProducts.join(', ')}`;
-                    } else {
-                        subtitle.textContent = `Showing ${selectedProducts.length} selected products`;
-                    }
-                    subtitle.style.fontWeight = 'bold';
-                    subtitle.style.color = '#667eea';
-                } else {
-                    console.log('No products selected, showing all');
-                }
-            } catch (e) {
-                console.error('Error parsing selected products:', e);
-            }
-        } else {
-            console.log('No selected products in localStorage, showing all cases');
-        }
-
-        // Use filtered data
-        casesData = filteredCasesData;
-        console.log('Final casesData length:', casesData.length);
-
-        function goBackToSelection() {
-            window.location.href = 'select-products.html';
-        }
-
         function calculateMetrics() {
             const total = casesData.length;
             const closed = casesData.filter(c => c.status === 'Closed').length;

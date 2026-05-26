@@ -1,0 +1,798 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cases Dashboard - May 2026</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            min-height: 100vh;
+            padding: 30px 20px;
+            color: #333;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .header {
+            background: white;
+            border-radius: 16px;
+            padding: 30px 40px;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.15);
+        }
+
+        .header-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .header h1 {
+            color: #1e3c72;
+            font-size: 2.2em;
+            font-weight: 700;
+            letter-spacing: -0.02em;
+        }
+
+        .filter-info {
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            color: white;
+            padding: 10px 20px;
+            border-radius: 12px;
+            font-size: 0.95em;
+            font-weight: 500;
+        }
+
+        .nav-buttons {
+            display: flex;
+            gap: 15px;
+        }
+
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 10px;
+            font-size: 1em;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-family: 'Inter', sans-serif;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            color: white;
+            box-shadow: 0 4px 15px rgba(30, 60, 114, 0.3);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(30, 60, 114, 0.4);
+        }
+
+        .btn-secondary {
+            background: white;
+            color: #1e3c72;
+            border: 2px solid #1e3c72;
+        }
+
+        .btn-secondary:hover {
+            background: #f8f9fa;
+        }
+
+        .btn-link {
+            background: #17a2b8;
+            color: white;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .btn-link:hover {
+            background: #138496;
+            transform: translateY(-2px);
+        }
+
+        .metrics {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .metric-card {
+            background: white;
+            border-radius: 16px;
+            padding: 25px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.15);
+            transition: transform 0.3s ease;
+        }
+
+        .metric-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .metric-value {
+            font-size: 2.5em;
+            font-weight: 700;
+            color: #1e3c72;
+            margin-bottom: 8px;
+        }
+
+        .metric-label {
+            color: #666;
+            font-size: 0.95em;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .charts-section {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: 25px;
+            margin-bottom: 30px;
+        }
+
+        .chart-card {
+            background: white;
+            border-radius: 16px;
+            padding: 30px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.15);
+        }
+
+        .chart-title {
+            font-size: 1.3em;
+            font-weight: 600;
+            color: #1e3c72;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .table-card {
+            background: white;
+            border-radius: 16px;
+            padding: 30px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.15);
+        }
+
+        .table-card h2 {
+            color: #1e3c72;
+            font-size: 1.5em;
+            font-weight: 600;
+            margin-bottom: 20px;
+        }
+
+        .table-container {
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.95em;
+        }
+
+        thead {
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            color: white;
+        }
+
+        thead th {
+            padding: 15px;
+            text-align: left;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            font-size: 0.85em;
+        }
+
+        tbody tr {
+            border-bottom: 1px solid #e9ecef;
+            transition: background 0.2s ease;
+        }
+
+        tbody tr:hover {
+            background: #f8f9fa;
+        }
+
+        tbody td {
+            padding: 15px;
+            color: #495057;
+        }
+
+        .status-badge {
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 0.85em;
+            font-weight: 600;
+            display: inline-block;
+        }
+
+        .status-open {
+            background: #fff3cd;
+            color: #856404;
+        }
+
+        .status-closed {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .priority-high {
+            color: #dc3545;
+            font-weight: 600;
+        }
+
+        .priority-medium {
+            color: #fd7e14;
+            font-weight: 600;
+        }
+
+        .priority-low {
+            color: #28a745;
+            font-weight: 600;
+        }
+
+        .pagination {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 20px;
+            padding: 15px 0;
+        }
+
+        .pagination-info {
+            color: #666;
+            font-size: 0.95em;
+        }
+
+        .pagination-controls {
+            display: flex;
+            gap: 10px;
+        }
+
+        .page-btn {
+            padding: 8px 16px;
+            border: 2px solid #1e3c72;
+            background: white;
+            color: #1e3c72;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .page-btn:hover:not(:disabled) {
+            background: #1e3c72;
+            color: white;
+        }
+
+        .page-btn:disabled {
+            opacity: 0.4;
+            cursor: not-allowed;
+        }
+
+        .filters-container {
+            display: grid;
+            grid-template-columns: 2fr 1fr 1fr 1fr;
+            gap: 15px;
+            margin-bottom: 20px;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 12px;
+        }
+
+        .filter-group {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .filter-label {
+            font-weight: 600;
+            color: #1e3c72;
+            font-size: 0.9em;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .filter-input, .filter-select {
+            padding: 10px 15px;
+            border: 2px solid #dee2e6;
+            border-radius: 8px;
+            font-size: 0.95em;
+            font-family: 'Inter', sans-serif;
+            transition: border-color 0.3s ease;
+        }
+
+        .filter-input:focus, .filter-select:focus {
+            outline: none;
+            border-color: #1e3c72;
+        }
+
+        .clear-filters-btn {
+            padding: 10px 20px;
+            background: #dc3545;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            margin-top: auto;
+            transition: all 0.3s ease;
+        }
+
+        .clear-filters-btn:hover {
+            background: #c82333;
+            transform: translateY(-2px);
+        }
+
+        @media (max-width: 768px) {
+            .filters-container {
+                grid-template-columns: 1fr;
+            }
+            .charts-section {
+                grid-template-columns: 1fr;
+            }
+
+            .header h1 {
+                font-size: 1.5em;
+            }
+
+            .header-top {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 15px;
+            }
+
+            .nav-buttons {
+                width: 100%;
+                flex-direction: column;
+            }
+
+            .btn {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="header-top">
+                <div>
+                    <h1>Cases Dashboard <span style="color: #2a5298; font-size: 0.7em; font-weight: 500;">- May 2026 Cases</span></h1>
+                    <div class="filter-info" id="filterInfo">Loading...</div>
+                </div>
+                <div class="nav-buttons">
+                    <a href="https://thomsonreutersglis2e.lightning.force.com/lightning/page/home" target="_blank" class="btn btn-link">GSI →</a>
+                    <a href="https://apac1.onesourcetax.com/" target="_blank" class="btn btn-link">OneSource Tax →</a>
+                    <a href="https://dev.azure.com/tr-tax-tapcsstechsup/ONESOURCE%20and%20GoSystem%20Support/_dashboards/dashboard/7caf3137-a23e-4962-8a12-20104c63e847" target="_blank" class="btn btn-link">ADO →</a>
+                    <button class="btn btn-secondary" onclick="changeProducts()">Change Products</button>
+                    <button class="btn btn-primary" onclick="showAllCases()">Show All Cases</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="metrics" id="metricsContainer">
+            <div class="metric-card">
+                <div class="metric-value" id="totalCases">0</div>
+                <div class="metric-label">Total Cases</div>
+            </div>
+            <div class="metric-card">
+                <div class="metric-value" id="openCases">0</div>
+                <div class="metric-label">Open Cases</div>
+            </div>
+            <div class="metric-card">
+                <div class="metric-value" id="closedCases">0</div>
+                <div class="metric-label">Closed Cases</div>
+            </div>
+            <div class="metric-card">
+                <div class="metric-value" id="avgAge">0</div>
+                <div class="metric-label">Avg Age (Days)</div>
+            </div>
+        </div>
+
+        <div class="charts-section">
+            <div class="chart-card">
+                <div class="chart-title">Cases by Status</div>
+                <canvas id="statusChart"></canvas>
+            </div>
+            <div class="chart-card">
+                <div class="chart-title">Cases by Priority</div>
+                <canvas id="priorityChart"></canvas>
+            </div>
+            <div class="chart-card">
+                <div class="chart-title">Cases by Product</div>
+                <canvas id="productChart"></canvas>
+            </div>
+            <div class="chart-card">
+                <div class="chart-title">Cases Over Time</div>
+                <canvas id="timeChart"></canvas>
+            </div>
+        </div>
+
+        <div class="table-card">
+            <h2>Case Details</h2>
+
+            <div class="filters-container">
+                <div class="filter-group">
+                    <label class="filter-label">Search</label>
+                    <input type="text" id="searchInput" class="filter-input" placeholder="Search case number, account, product..." onkeyup="applyFilters()">
+                </div>
+                <div class="filter-group">
+                    <label class="filter-label">Status</label>
+                    <select id="statusFilter" class="filter-select" onchange="applyFilters()">
+                        <option value="">All Statuses</option>
+                        <option value="Open">Open</option>
+                        <option value="Closed">Closed</option>
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <label class="filter-label">Priority</label>
+                    <select id="priorityFilter" class="filter-select" onchange="applyFilters()">
+                        <option value="">All Priorities</option>
+                        <option value="High">High</option>
+                        <option value="Medium">Medium</option>
+                        <option value="Low">Low</option>
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <label class="filter-label">Actions</label>
+                    <button class="clear-filters-btn" onclick="clearFilters()">Clear Filters</button>
+                </div>
+            </div>
+
+            <div class="table-container">
+                <table id="casesTable">
+                    <thead>
+                        <tr>
+                            <th>Case Number</th>
+                            <th>Account</th>
+                            <th>Product</th>
+                            <th>Status</th>
+                            <th>Priority</th>
+                            <th>Opened Date</th>
+                            <th>Age (Days)</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tableBody">
+                    </tbody>
+                </table>
+            </div>
+            <div class="pagination">
+                <div class="pagination-info" id="pageInfo">Showing 0-0 of 0 cases</div>
+                <div class="pagination-controls">
+                    <button class="page-btn" id="prevBtn" onclick="previousPage()">← Previous</button>
+                    <button class="page-btn" id="nextBtn" onclick="nextPage()">Next →</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="cases-data-embedded.js"></script>
+    <script>
+        let filteredCases = [];
+        let displayedCases = [];
+        let currentPage = 1;
+        const casesPerPage = 25;
+
+        function loadDashboard() {
+            const selectedProducts = JSON.parse(localStorage.getItem('selectedProducts') || '[]');
+
+            if (selectedProducts.length === 0) {
+                filteredCases = casesData;
+                document.getElementById('filterInfo').textContent = 'Showing All Cases';
+            } else {
+                filteredCases = casesData.filter(c => selectedProducts.includes(c.product));
+                document.getElementById('filterInfo').textContent = `Filtered by ${selectedProducts.length} product(s)`;
+            }
+
+            displayedCases = filteredCases;
+            currentPage = 1;
+            updateMetrics();
+            createCharts();
+            populateTable();
+        }
+
+        function updateMetrics() {
+            const total = filteredCases.length;
+            const open = filteredCases.filter(c => c.status === 'Open').length;
+            const closed = total - open;
+            const avgAge = Math.round(filteredCases.reduce((sum, c) => sum + c.age, 0) / total);
+
+            document.getElementById('totalCases').textContent = total;
+            document.getElementById('openCases').textContent = open;
+            document.getElementById('closedCases').textContent = closed;
+            document.getElementById('avgAge').textContent = avgAge;
+        }
+
+        function createCharts() {
+            createStatusChart();
+            createPriorityChart();
+            createProductChart();
+            createTimeChart();
+        }
+
+        function createStatusChart() {
+            const ctx = document.getElementById('statusChart');
+            const open = filteredCases.filter(c => c.status === 'Open').length;
+            const closed = filteredCases.length - open;
+
+            new Chart(ctx, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Open', 'Closed'],
+                    datasets: [{
+                        data: [open, closed],
+                        backgroundColor: ['#ffc107', '#28a745'],
+                        borderWidth: 3,
+                        borderColor: '#fff'
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: true,
+                    plugins: {
+                        legend: {
+                            position: 'bottom',
+                            labels: {
+                                padding: 15,
+                                font: {
+                                    size: 13,
+                                    family: 'Inter'
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        function createPriorityChart() {
+            const ctx = document.getElementById('priorityChart');
+            const priorityCounts = {};
+            filteredCases.forEach(c => {
+                priorityCounts[c.priority] = (priorityCounts[c.priority] || 0) + 1;
+            });
+
+            new Chart(ctx, {
+                type: 'pie',
+                data: {
+                    labels: Object.keys(priorityCounts),
+                    datasets: [{
+                        data: Object.values(priorityCounts),
+                        backgroundColor: ['#dc3545', '#fd7e14', '#28a745'],
+                        borderWidth: 3,
+                        borderColor: '#fff'
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: true,
+                    plugins: {
+                        legend: {
+                            position: 'bottom',
+                            labels: {
+                                padding: 15,
+                                font: {
+                                    size: 13,
+                                    family: 'Inter'
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        function createProductChart() {
+            const ctx = document.getElementById('productChart');
+            const productCounts = {};
+            filteredCases.forEach(c => {
+                productCounts[c.product] = (productCounts[c.product] || 0) + 1;
+            });
+
+            const sortedProducts = Object.entries(productCounts)
+                .sort((a, b) => b[1] - a[1]);
+
+            new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: sortedProducts.map(p => p[0]),
+                    datasets: [{
+                        label: 'Cases',
+                        data: sortedProducts.map(p => p[1]),
+                        backgroundColor: '#2a5298',
+                        borderRadius: 8
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: true,
+                    plugins: {
+                        legend: {
+                            display: false
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            ticks: {
+                                font: {
+                                    family: 'Inter'
+                                }
+                            }
+                        },
+                        x: {
+                            ticks: {
+                                font: {
+                                    family: 'Inter',
+                                    size: 11
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        function createTimeChart() {
+            const ctx = document.getElementById('timeChart');
+            const dateCounts = {};
+
+            filteredCases.forEach(c => {
+                const date = c.openedDate.split(' ')[0];
+                dateCounts[date] = (dateCounts[date] || 0) + 1;
+            });
+
+            const sortedDates = Object.keys(dateCounts).sort();
+
+            new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: sortedDates,
+                    datasets: [{
+                        label: 'Cases Opened',
+                        data: sortedDates.map(d => dateCounts[d]),
+                        borderColor: '#1e3c72',
+                        backgroundColor: 'rgba(30, 60, 114, 0.1)',
+                        tension: 0.4,
+                        fill: true,
+                        borderWidth: 3
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: true,
+                    plugins: {
+                        legend: {
+                            display: false
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            ticks: {
+                                font: {
+                                    family: 'Inter'
+                                }
+                            }
+                        },
+                        x: {
+                            ticks: {
+                                font: {
+                                    family: 'Inter',
+                                    size: 11
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        function applyFilters() {
+            const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+            const statusFilter = document.getElementById('statusFilter').value;
+            const priorityFilter = document.getElementById('priorityFilter').value;
+
+            displayedCases = filteredCases.filter(c => {
+                const matchesSearch = !searchTerm ||
+                    c.caseNumber.toLowerCase().includes(searchTerm) ||
+                    c.account.toLowerCase().includes(searchTerm) ||
+                    c.product.toLowerCase().includes(searchTerm);
+
+                const matchesStatus = !statusFilter || c.status === statusFilter;
+                const matchesPriority = !priorityFilter || c.priority === priorityFilter;
+
+                return matchesSearch && matchesStatus && matchesPriority;
+            });
+
+            currentPage = 1;
+            populateTable();
+        }
+
+        function clearFilters() {
+            document.getElementById('searchInput').value = '';
+            document.getElementById('statusFilter').value = '';
+            document.getElementById('priorityFilter').value = '';
+            applyFilters();
+        }
+
+        function populateTable() {
+            const tbody = document.getElementById('tableBody');
+            tbody.innerHTML = '';
+
+            const totalCases = displayedCases.length;
+            const totalPages = Math.ceil(totalCases / casesPerPage);
+            const startIndex = (currentPage - 1) * casesPerPage;
+            const endIndex = Math.min(startIndex + casesPerPage, totalCases);
+
+            const casesToShow = displayedCases.slice(startIndex, endIndex);
+
+            casesToShow.forEach(c => {
+                const row = tbody.insertRow();
+                row.innerHTML = `
+                    <td>${c.caseNumber}</td>
+                    <td>${c.account}</td>
+                    <td>${c.product}</td>
+                    <td><span class="status-badge status-${c.status.toLowerCase()}">${c.status}</span></td>
+                    <td class="priority-${c.priority.toLowerCase()}">${c.priority}</td>
+                    <td>${c.openedDate}</td>
+                    <td>${c.age}</td>
+                `;
+            });
+
+            // Update pagination info
+            document.getElementById('pageInfo').textContent = `Showing ${startIndex + 1}-${endIndex} of ${totalCases} cases (Page ${currentPage} of ${totalPages})`;
+
+            // Update button states
+            document.getElementById('prevBtn').disabled = currentPage === 1;
+            document.getElementById('nextBtn').disabled = currentPage === totalPages;
+        }
+
+        function previousPage() {
+            if (currentPage > 1) {
+                currentPage--;
+                populateTable();
+            }
+        }
+
+        function nextPage() {
+            const totalPages = Math.ceil(displayedCases.length / casesPerPage);
+            if (currentPage < totalPages) {
+                currentPage++;
+                populateTable();
+            }
+        }
+
+        function changeProducts() {
+            window.location.href = 'professional-selection.html';
+        }
+
+        function showAllCases() {
+            localStorage.removeItem('selectedProducts');
+            location.reload();
+        }
+
+        loadDashboard();
+    </script>
+</body>
+</html>
