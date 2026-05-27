@@ -942,9 +942,8 @@
 
             casesToShow.forEach(c => {
                 const row = tbody.insertRow();
-                const gsiSearchUrl = `https://thomsonreutersglis2e.lightning.force.com/one/one.app#/search?term=${encodeURIComponent(c.caseNumber)}`;
                 row.innerHTML = `
-                    <td><a href="${gsiSearchUrl}" target="_blank" class="case-link" title="Search for case ${c.caseNumber} in GSI">${c.caseNumber}</a></td>
+                    <td><a href="https://thomsonreutersglis2e.lightning.force.com/lightning/page/home" target="_blank" class="case-link" title="Open GSI">${c.caseNumber}</a></td>
                     <td>${c.caseOwner || 'N/A'}</td>
                     <td>${c.account}</td>
                     <td>${c.product}</td>
