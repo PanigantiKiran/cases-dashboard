@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Alternative URL Formats Test</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            max-width: 1000px;
+            margin: 40px auto;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        h1 { color: #1e3c72; }
+        .test-section {
+            background: white;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        .test-url {
+            background: #f8f9fa;
+            padding: 15px;
+            margin: 10px 0;
+            border-left: 4px solid #dc3545;
+            font-family: 'Courier New', monospace;
+            font-size: 12px;
+            word-break: break-all;
+        }
+        .test-link {
+            display: inline-block;
+            padding: 10px 20px;
+            background: #dc3545;
+            color: white;
+            text-decoration: none;
+            border-radius: 6px;
+            margin: 10px 5px;
+            font-weight: 600;
+        }
+        .test-link:hover { background: #c82333; }
+        .category {
+            background: #1e3c72;
+            color: white;
+            padding: 10px 15px;
+            border-radius: 6px;
+            margin: 20px 0 10px 0;
+            font-weight: 600;
+        }
+        .case-input {
+            padding: 10px;
+            font-size: 16px;
+            border: 2px solid #ddd;
+            border-radius: 4px;
+            width: 200px;
+        }
+        .update-btn {
+            padding: 10px 20px;
+            background: #28a745;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            font-size: 16px;
+            cursor: pointer;
+            font-weight: 600;
+        }
+    </style>
+</head>
+<body>
+    <h1>🔍 Alternative URL Formats Test</h1>
+    <p><strong>Testing Creative Solutions:</strong> Classic URLs, Mobile URLs, and Alternative Endpoints</p>
+
+    <div style="text-align: center; margin: 20px 0;">
+        <input type="text" id="caseNumber" class="case-input" placeholder="Enter case number" value="23758649">
+        <button class="update-btn" onclick="updateUrls()">Update All URLs</button>
+    </div>
+
+    <div class="category">🏛️ CLASSIC SALESFORCE URLs (Pre-Lightning)</div>
+
+    <div class="test-section">
+        <h3>Test 1: Classic Global Search</h3>
+        <div class="test-url" id="url1"></div>
+        <a href="#" id="link1" class="test-link" target="_blank">Test Classic Search</a>
+    </div>
+
+    <div class="test-section">
+        <h3>Test 2: Classic Case Search</h3>
+        <div class="test-url" id="url2"></div>
+        <a href="#" id="link2" class="test-link" target="_blank">Test Case Search</a>
+    </div>
+
+    <div class="test-section">
+        <h3>Test 3: Classic Unified Search</h3>
+        <div class="test-url" id="url3"></div>
+        <a href="#" id="link3" class="test-link" target="_blank">Test Unified Search</a>
+    </div>
+
+    <div class="category">📱 MOBILE URLs</div>
+
+    <div class="test-section">
+        <h3>Test 4: Salesforce1 Mobile URL</h3>
+        <div class="test-url" id="url4"></div>
+        <a href="#" id="link4" class="test-link" target="_blank">Test Mobile URL</a>
+    </div>
+
+    <div class="test-section">
+        <h3>Test 5: Mobile Aloha Search</h3>
+        <div class="test-url" id="url5"></div>
+        <a href="#" id="link5" class="test-link" target="_blank">Test Aloha Search</a>
+    </div>
+
+    <div class="category">🔧 ALTERNATIVE ENDPOINTS</div>
+
+    <div class="test-section">
+        <h3>Test 6: Search with Type Parameter</h3>
+        <div class="test-url" id="url6"></div>
+        <a href="#" id="link6" class="test-link" target="_blank">Test Type Search</a>
+    </div>
+
+    <div class="test-section">
+        <h3>Test 7: Object-Specific Home</h3>
+        <div class="test-url" id="url7"></div>
+        <a href="#" id="link7" class="test-link" target="_blank">Test Object Home</a>
+    </div>
+
+    <div class="test-section">
+        <h3>Test 8: Search with Multiple Parameters</h3>
+        <div class="test-url" id="url8"></div>
+        <a href="#" id="link8" class="test-link" target="_blank">Test Multi-Param</a>
+    </div>
+
+    <div class="test-section">
+        <h3>Test 9: Fragment with Search Term</h3>
+        <div class="test-url" id="url9"></div>
+        <a href="#" id="link9" class="test-link" target="_blank">Test Fragment URL</a>
+    </div>
+
+    <div class="test-section">
+        <h3>Test 10: List View with Filter Name</h3>
+        <div class="test-url" id="url10"></div>
+        <a href="#" id="link10" class="test-link" target="_blank">Test List Filter</a>
+    </div>
+
+    <script>
+        const baseUrl = 'https://thomsonreutersglis2e.lightning.force.com';
+
+        function updateUrls() {
+            const caseNum = document.getElementById('caseNumber').value || '23758649';
+            const encoded = encodeURIComponent(caseNum);
+
+            const urls = [
+                // Classic URLs
+                `${baseUrl}/_ui/search/ui/UnifiedSearchResults?str=${encoded}`,
+                `${baseUrl}/search/SearchResults?searchType=Case&str=${encoded}`,
+                `${baseUrl}/_ui/search/ui/UnifiedSearchResults?searchType=2&sen=500&str=${encoded}`,
+
+                // Mobile URLs
+                `${baseUrl}/one/one.app?source=aloha#search/${encoded}`,
+                `${baseUrl}/one/one.app?source=aloha#/sObject/Case/list?filterName=Recent&search=${encoded}`,
+
+                // Alternative endpoints
+                `${baseUrl}/lightning/o/Case/list?searchType=Recent&str=${encoded}`,
+                `${baseUrl}/lightning/o/Case/home?filterName=Recent&search=${encoded}`,
+                `${baseUrl}/lightning/page/home?search=${encoded}&scope=Case`,
+                `${baseUrl}/lightning/page/home#search=${encoded}`,
+                `${baseUrl}/lightning/o/Case/list?filterName=00Bxx000000xxxx&search=${encoded}`
+            ];
+
+            urls.forEach((url, index) => {
+                const num = index + 1;
+                document.getElementById(`url${num}`).textContent = url;
+                document.getElementById(`link${num}`).href = url;
+            });
+        }
+
+        updateUrls();
+    </script>
+
+    <div style="margin: 40px 0; padding: 20px; background: #fff3cd; border-radius: 8px;">
+        <h3>📝 Report Back:</h3>
+        <p><strong>If any URL works, please tell me the test number!</strong></p>
+        <p>Also note: Does it open GSI? Does it search? Any errors?</p>
+    </div>
+</body>
+</html>
