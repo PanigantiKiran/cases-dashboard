@@ -337,6 +337,21 @@
             color: #495057;
         }
 
+        .case-link {
+            color: #1e3c72;
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.2s;
+            border-bottom: 2px solid transparent;
+            padding-bottom: 2px;
+        }
+
+        .case-link:hover {
+            color: #2a5298;
+            border-bottom-color: #2a5298;
+            cursor: pointer;
+        }
+
         .status-badge {
             padding: 6px 12px;
             border-radius: 20px;
@@ -928,7 +943,7 @@
             casesToShow.forEach(c => {
                 const row = tbody.insertRow();
                 row.innerHTML = `
-                    <td>${c.caseNumber}</td>
+                    <td><a href="https://thomsonreutersglis2e.lightning.force.com/lightning/page/home" target="_blank" class="case-link">${c.caseNumber}</a></td>
                     <td>${c.caseOwner || 'N/A'}</td>
                     <td>${c.account}</td>
                     <td>${c.product}</td>
