@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Salesforce Search URL Tester</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            max-width: 1000px;
+            margin: 40px auto;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        h1 {
+            color: #1e3c72;
+        }
+        .test-section {
+            background: white;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        .test-url {
+            background: #f8f9fa;
+            padding: 15px;
+            margin: 10px 0;
+            border-left: 4px solid #1e3c72;
+            font-family: 'Courier New', monospace;
+            font-size: 13px;
+            word-break: break-all;
+        }
+        .test-link {
+            display: inline-block;
+            padding: 10px 20px;
+            background: #1e3c72;
+            color: white;
+            text-decoration: none;
+            border-radius: 6px;
+            margin: 10px 5px;
+            font-weight: 600;
+        }
+        .test-link:hover {
+            background: #2a5298;
+        }
+        .description {
+            color: #666;
+            font-size: 14px;
+            margin: 10px 0;
+        }
+        .instructions {
+            background: #fff3cd;
+            padding: 15px;
+            border-radius: 6px;
+            border: 1px solid #ffc107;
+            margin: 20px 0;
+        }
+        .case-input {
+            padding: 10px;
+            font-size: 16px;
+            border: 2px solid #ddd;
+            border-radius: 4px;
+            width: 200px;
+        }
+        .update-btn {
+            padding: 10px 20px;
+            background: #28a745;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            font-size: 16px;
+            cursor: pointer;
+            font-weight: 600;
+        }
+        .update-btn:hover {
+            background: #218838;
+        }
+    </style>
+</head>
+<body>
+    <h1>🔍 Salesforce Search URL Tester</h1>
+
+    <div class="instructions">
+        <strong>📋 Instructions:</strong>
+        <ol>
+            <li>Enter a case number below (e.g., 23758649)</li>
+            <li>Click "Update All URLs"</li>
+            <li>Click each "Test URL" button to try different search formats</li>
+            <li>Note which URL works (opens GSI and searches for the case)</li>
+            <li>Share the working URL number with me</li>
+        </ol>
+    </div>
+
+    <div style="text-align: center; margin: 20px 0;">
+        <input type="text" id="caseNumber" class="case-input" placeholder="Enter case number" value="23758649">
+        <button class="update-btn" onclick="updateUrls()">Update All URLs</button>
+    </div>
+
+    <!-- Test 1 -->
+    <div class="test-section">
+        <h3>Test 1: One.app Global Search</h3>
+        <div class="description">Standard Salesforce global search endpoint</div>
+        <div class="test-url" id="url1"></div>
+        <a href="#" id="link1" class="test-link" target="_blank">Test URL 1</a>
+    </div>
+
+    <!-- Test 2 -->
+    <div class="test-section">
+        <h3>Test 2: Lightning Global Search</h3>
+        <div class="description">Lightning experience standard search</div>
+        <div class="test-url" id="url2"></div>
+        <a href="#" id="link2" class="test-link" target="_blank">Test URL 2</a>
+    </div>
+
+    <!-- Test 3 -->
+    <div class="test-section">
+        <h3>Test 3: Case List with Search Parameter</h3>
+        <div class="description">Opens Case object list with search filter</div>
+        <div class="test-url" id="url3"></div>
+        <a href="#" id="link3" class="test-link" target="_blank">Test URL 3</a>
+    </div>
+
+    <!-- Test 4 -->
+    <div class="test-section">
+        <h3>Test 4: Search Results Page</h3>
+        <div class="description">Direct search results endpoint</div>
+        <div class="test-url" id="url4"></div>
+        <a href="#" id="link4" class="test-link" target="_blank">Test URL 4</a>
+    </div>
+
+    <!-- Test 5 -->
+    <div class="test-section">
+        <h3>Test 5: Global Search Component</h3>
+        <div class="description">Lightning component search interface</div>
+        <div class="test-url" id="url5"></div>
+        <a href="#" id="link5" class="test-link" target="_blank">Test URL 5</a>
+    </div>
+
+    <!-- Test 6 -->
+    <div class="test-section">
+        <h3>Test 6: Search with Scope Parameter</h3>
+        <div class="description">Search limited to Case object</div>
+        <div class="test-url" id="url6"></div>
+        <a href="#" id="link6" class="test-link" target="_blank">Test URL 6</a>
+    </div>
+
+    <!-- Test 7 -->
+    <div class="test-section">
+        <h3>Test 7: Case Object Home with Search</h3>
+        <div class="description">Case home page with search query</div>
+        <div class="test-url" id="url7"></div>
+        <a href="#" id="link7" class="test-link" target="_blank">Test URL 7</a>
+    </div>
+
+    <!-- Test 8 -->
+    <div class="test-section">
+        <h3>Test 8: Recent Cases List</h3>
+        <div class="description">Recent cases list view (for manual search)</div>
+        <div class="test-url" id="url8"></div>
+        <a href="#" id="link8" class="test-link" target="_blank">Test URL 8</a>
+    </div>
+
+    <script>
+        const baseUrl = 'https://thomsonreutersglis2e.lightning.force.com';
+
+        function updateUrls() {
+            const caseNum = document.getElementById('caseNumber').value || '23758649';
+
+            const urls = [
+                `${baseUrl}/one/one.app#/search?term=${encodeURIComponent(caseNum)}`,
+                `${baseUrl}/lightning/n/standard__globalSearch?term=${encodeURIComponent(caseNum)}`,
+                `${baseUrl}/lightning/o/Case/list?search=${encodeURIComponent(caseNum)}`,
+                `${baseUrl}/lightning/page/search?searchTerm=${encodeURIComponent(caseNum)}`,
+                `${baseUrl}/lightning/cmp/runtime_service_search__search?searchTerm=${encodeURIComponent(caseNum)}`,
+                `${baseUrl}/one/one.app#/search?term=${encodeURIComponent(caseNum)}&scope=Case`,
+                `${baseUrl}/lightning/o/Case/home?search=${encodeURIComponent(caseNum)}`,
+                `${baseUrl}/lightning/o/Case/list?filterName=Recent`
+            ];
+
+            urls.forEach((url, index) => {
+                const num = index + 1;
+                document.getElementById(`url${num}`).textContent = url;
+                document.getElementById(`link${num}`).href = url;
+            });
+        }
+
+        // Initialize on load
+        updateUrls();
+    </script>
+
+    <div style="margin: 40px 0; padding: 20px; background: #e7f3ff; border-radius: 8px;">
+        <h3>📝 Report Back:</h3>
+        <p>After testing, please tell me:</p>
+        <ul>
+            <li><strong>Which URL number worked?</strong> (e.g., "Test 3 worked")</li>
+            <li><strong>What happened?</strong> (Did it search automatically? Show results?)</li>
+            <li><strong>Any errors?</strong> (Screenshot if possible)</li>
+        </ul>
+    </div>
+</body>
+</html>
