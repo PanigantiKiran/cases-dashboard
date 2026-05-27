@@ -8,6 +8,12 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        // Check authentication
+        if (sessionStorage.getItem('dashboardAuth') !== 'true') {
+            window.location.href = 'login.html';
+        }
+    </script>
     <style>
         * {
             margin: 0;
@@ -26,21 +32,85 @@
         .container {
             max-width: 1400px;
             margin: 0 auto;
+            position: relative;
         }
 
         .header {
             background: white;
             border-radius: 16px;
-            padding: 30px 40px;
+            padding: 25px 40px 30px 40px;
             margin-bottom: 30px;
             box-shadow: 0 10px 40px rgba(0,0,0,0.15);
+            position: relative;
+            overflow: visible;
         }
 
         .header-top {
             display: flex;
+            flex-direction: column;
+            gap: 15px;
+            position: relative;
+        }
+
+        .header-title-row {
+            display: flex;
             justify-content: space-between;
-            align-items: center;
-            margin-bottom: 20px;
+            align-items: flex-start;
+            gap: 20px;
+        }
+
+        .credit-badge {
+            position: fixed;
+            top: 5px;
+            right: 30px;
+            background: rgba(30, 60, 114, 0.95);
+            padding: 12px 20px;
+            border-radius: 20px;
+            color: #64b5f6;
+            font-size: 13px;
+            font-weight: 600;
+            letter-spacing: 0.3px;
+            border: 2px solid rgba(100, 181, 246, 0.5);
+            z-index: 1000;
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
+            backdrop-filter: blur(10px);
+            text-align: center;
+            line-height: 1.5;
+        }
+
+        .credit-badge div:first-child {
+            font-size: 0.9em;
+            opacity: 0.9;
+            margin-bottom: 3px;
+        }
+
+        .credit-badge div:last-child {
+            font-size: 1em;
+            font-weight: 700;
+        }
+
+        .logout-btn {
+            position: fixed;
+            top: 5px;
+            left: 30px;
+            background: rgba(220, 53, 69, 0.95);
+            padding: 10px 20px;
+            border-radius: 20px;
+            color: white;
+            font-size: 13px;
+            font-weight: 600;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            z-index: 1000;
+            cursor: pointer;
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
+            backdrop-filter: blur(10px);
+            transition: all 0.3s;
+        }
+
+        .logout-btn:hover {
+            background: rgba(200, 35, 51, 0.95);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.4);
         }
 
         .header h1 {
@@ -48,20 +118,69 @@
             font-size: 2.2em;
             font-weight: 700;
             letter-spacing: -0.02em;
+            margin-bottom: 15px;
         }
 
         .filter-info {
             background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
             color: white;
-            padding: 10px 20px;
+            padding: 8px 16px;
             border-radius: 12px;
-            font-size: 0.95em;
+            font-size: 0.9em;
             font-weight: 500;
+            white-space: nowrap;
+            position: absolute;
+            top: 10px;
+            right: 15px;
+            z-index: 10;
+        }
+
+        .show-all-btn {
+            align-self: flex-start;
+            margin-top: 0;
         }
 
         .nav-buttons {
             display: flex;
-            gap: 15px;
+            flex-wrap: nowrap;
+            gap: 12px;
+            align-items: center;
+            overflow-x: auto;
+        }
+
+        .nav-buttons .btn-link {
+            flex: 0 0 auto;
+        }
+
+        .nav-buttons .btn-secondary,
+        .nav-buttons .btn-primary {
+            flex: 0 0 auto;
+        }
+
+        .logo-container {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 10px;
+            flex: 1;
+        }
+
+        .logo-container img {
+            height: 45px;
+            width: auto;
+            order: 2;
+        }
+
+        .logo-container h1 {
+            margin: 0;
+            padding: 0;
+            line-height: 1.2;
+            order: 1;
+        }
+
+        .logo-svg {
+            height: 45px;
+            width: auto;
         }
 
         .btn {
@@ -101,6 +220,8 @@
             color: white;
             text-decoration: none;
             display: inline-block;
+            font-size: 14px;
+            padding: 10px 18px;
         }
 
         .btn-link:hover {
@@ -290,7 +411,7 @@
 
         .filters-container {
             display: grid;
-            grid-template-columns: 2fr 1fr 1fr 1fr;
+            grid-template-columns: 2fr 1.5fr 1fr 1fr 1fr;
             gap: 15px;
             margin-bottom: 20px;
             padding: 20px;
@@ -343,6 +464,25 @@
             transform: translateY(-2px);
         }
 
+        .footer {
+            text-align: center;
+            padding: 20px;
+            color: white;
+            font-size: 0.9em;
+            opacity: 0.9;
+            margin-top: 20px;
+        }
+
+        .footer a {
+            color: white;
+            text-decoration: none;
+            font-weight: 500;
+        }
+
+        .footer a:hover {
+            text-decoration: underline;
+        }
+
         @media (max-width: 768px) {
             .filters-container {
                 grid-template-columns: 1fr;
@@ -373,19 +513,36 @@
     </style>
 </head>
 <body>
+    <button class="logout-btn" onclick="logout()">🔒 Logout</button>
     <div class="container">
+        <div class="credit-badge">
+            <div>Created by</div>
+            <div>- Paniganti Prabhu Kiran</div>
+        </div>
         <div class="header">
             <div class="header-top">
-                <div>
-                    <h1>Cases Dashboard <span style="color: #2a5298; font-size: 0.7em; font-weight: 500;">- May 2026 Cases</span></h1>
-                    <div class="filter-info" id="filterInfo">Loading...</div>
+                <div class="header-title-row">
+                    <div class="logo-container">
+                        <img src="logo.png" alt="Thomson Reuters Logo" style="height: 50px; width: auto;">
+                        <h1>Cases Dashboard</h1>
+                    </div>
                 </div>
+                <div class="filter-info" id="filterInfo">Loading...</div>
                 <div class="nav-buttons">
                     <a href="https://thomsonreutersglis2e.lightning.force.com/lightning/page/home" target="_blank" class="btn btn-link">GSI →</a>
-                    <a href="https://apac1.onesourcetax.com/" target="_blank" class="btn btn-link">OneSource Tax →</a>
-                    <a href="https://dev.azure.com/tr-tax-tapcsstechsup/ONESOURCE%20and%20GoSystem%20Support/_dashboards/dashboard/7caf3137-a23e-4962-8a12-20104c63e847" target="_blank" class="btn btn-link">ADO →</a>
+                    <a href="https://apac1.onesourcetax.com/" target="_blank" class="btn btn-link">APAC Platform →</a>
+                    <a href="https://sso.thomsonreuters.com/idp/startSSO.ping?PartnerSpId=trtasso.thomson.com&TargetResource=https://apac1.onesourcetax.com" target="_blank" class="btn btn-link">APAC Switch →</a>
+                    <a href="https://dev.azure.com/tr-tax-tapcsstechsup/ONESOURCE%20and%20GoSystem%20Support/_dashboards/dashboard/7caf3137-a23e-4962-8a12-20104c63e847" target="_blank" class="btn btn-link">ADO Link →</a>
+                    <a href="https://dataandanalytics.int.thomsonreuters.com/ai-platform/ai-chains/use/59c4ed4d-8677-4671-aa7c-9886033fa926" target="_blank" class="btn btn-link">AI Chain ||OCT || OST - Historical ADO's Hub →</a>
+                    <a href="https://corporates-status.thomsonreuters.com/" target="_blank" class="btn btn-link">System Status Updates →</a>
+                </div>
+                <div class="nav-buttons">
+                    <a href="https://api.thomsonreuters.com/digital/onepass/onesource/registration/prod/authorize?productid=MKTTAX&apikey=lDHR3l3ARfKa1wdm3dAG1PkwzG14ZJV4" target="_blank" class="btn btn-link">OnePass →</a>
+                    <a href="https://trenterprise.service-now.com/esc?id=sc_cat_item&sys_id=b32add5b1bd4c0106f97fe6edd4bcb15" target="_blank" class="btn btn-link">Service Now →</a>
+                </div>
+                <div class="nav-buttons">
                     <button class="btn btn-secondary" onclick="changeProducts()">Change Products</button>
-                    <button class="btn btn-primary" onclick="showAllCases()">Show All Cases</button>
+                    <button class="btn btn-primary show-all-btn" onclick="showAllCases()">Show All Cases</button>
                 </div>
             </div>
         </div>
@@ -437,6 +594,10 @@
                     <input type="text" id="searchInput" class="filter-input" placeholder="Search case number, account, product..." onkeyup="applyFilters()">
                 </div>
                 <div class="filter-group">
+                    <label class="filter-label">Case Owner Name</label>
+                    <input type="text" id="nameFilter" class="filter-input" placeholder="Search by name..." onkeyup="applyFilters()">
+                </div>
+                <div class="filter-group">
                     <label class="filter-label">Status</label>
                     <select id="statusFilter" class="filter-select" onchange="applyFilters()">
                         <option value="">All Statuses</option>
@@ -464,6 +625,7 @@
                     <thead>
                         <tr>
                             <th>Case Number</th>
+                            <th>Case Owner</th>
                             <th>Account</th>
                             <th>Product</th>
                             <th>Status</th>
@@ -484,6 +646,10 @@
                 </div>
             </div>
         </div>
+
+        <div class="footer">
+            Created by <strong>Paniganti Prabhu Kiran</strong>
+        </div>
     </div>
 
     <script src="cases-data-embedded.js"></script>
@@ -492,6 +658,13 @@
         let displayedCases = [];
         let currentPage = 1;
         const casesPerPage = 25;
+
+        function logout() {
+            if (confirm('Are you sure you want to logout?')) {
+                sessionStorage.removeItem('dashboardAuth');
+                window.location.href = 'login.html';
+            }
+        }
 
         function loadDashboard() {
             const selectedProducts = JSON.parse(localStorage.getItem('selectedProducts') || '[]');
@@ -515,7 +688,7 @@
             const total = filteredCases.length;
             const open = filteredCases.filter(c => c.status === 'Open').length;
             const closed = total - open;
-            const avgAge = Math.round(filteredCases.reduce((sum, c) => sum + c.age, 0) / total);
+            const avgAge = total > 0 ? Math.round(filteredCases.reduce((sum, c) => sum + c.age, 0) / total) : 0;
 
             document.getElementById('totalCases').textContent = total;
             document.getElementById('openCases').textContent = open;
@@ -671,11 +844,11 @@
                     datasets: [{
                         label: 'Cases Opened',
                         data: sortedDates.map(d => dateCounts[d]),
-                        borderColor: '#1e3c72',
-                        backgroundColor: 'rgba(30, 60, 114, 0.1)',
-                        tension: 0.4,
+                        borderColor: '#2a5298',
+                        backgroundColor: 'rgba(42, 82, 152, 0.1)',
+                        borderWidth: 2,
                         fill: true,
-                        borderWidth: 3
+                        tension: 0.4
                     }]
                 },
                 options: {
@@ -710,6 +883,7 @@
 
         function applyFilters() {
             const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+            const nameFilter = document.getElementById('nameFilter').value.toLowerCase();
             const statusFilter = document.getElementById('statusFilter').value;
             const priorityFilter = document.getElementById('priorityFilter').value;
 
@@ -719,10 +893,13 @@
                     c.account.toLowerCase().includes(searchTerm) ||
                     c.product.toLowerCase().includes(searchTerm);
 
+                const matchesName = !nameFilter ||
+                    (c.caseOwner && c.caseOwner.toLowerCase().includes(nameFilter));
+
                 const matchesStatus = !statusFilter || c.status === statusFilter;
                 const matchesPriority = !priorityFilter || c.priority === priorityFilter;
 
-                return matchesSearch && matchesStatus && matchesPriority;
+                return matchesSearch && matchesName && matchesStatus && matchesPriority;
             });
 
             currentPage = 1;
@@ -731,6 +908,7 @@
 
         function clearFilters() {
             document.getElementById('searchInput').value = '';
+            document.getElementById('nameFilter').value = '';
             document.getElementById('statusFilter').value = '';
             document.getElementById('priorityFilter').value = '';
             applyFilters();
@@ -751,6 +929,7 @@
                 const row = tbody.insertRow();
                 row.innerHTML = `
                     <td>${c.caseNumber}</td>
+                    <td>${c.caseOwner || 'N/A'}</td>
                     <td>${c.account}</td>
                     <td>${c.product}</td>
                     <td><span class="status-badge status-${c.status.toLowerCase()}">${c.status}</span></td>
@@ -761,11 +940,15 @@
             });
 
             // Update pagination info
-            document.getElementById('pageInfo').textContent = `Showing ${startIndex + 1}-${endIndex} of ${totalCases} cases (Page ${currentPage} of ${totalPages})`;
+            if (totalCases === 0) {
+                document.getElementById('pageInfo').textContent = 'No cases to display';
+            } else {
+                document.getElementById('pageInfo').textContent = `Showing ${startIndex + 1}-${endIndex} of ${totalCases} cases (Page ${currentPage} of ${Math.max(1, totalPages)})`;
+            }
 
             // Update button states
             document.getElementById('prevBtn').disabled = currentPage === 1;
-            document.getElementById('nextBtn').disabled = currentPage === totalPages;
+            document.getElementById('nextBtn').disabled = currentPage === totalPages || totalPages === 0;
         }
 
         function previousPage() {

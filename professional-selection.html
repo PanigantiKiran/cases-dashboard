@@ -5,6 +5,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Case Analytics - Product Selection</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <script>
+        // Check authentication
+        if (sessionStorage.getItem('dashboardAuth') !== 'true') {
+            window.location.href = 'login.html';
+        }
+    </script>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         
@@ -253,13 +259,38 @@
             border-color: #1e3c72;
             color: #1e3c72;
         }
+
+        .logout-btn {
+            position: fixed;
+            top: 20px;
+            left: 30px;
+            background: rgba(220, 53, 69, 0.95);
+            padding: 10px 20px;
+            border-radius: 20px;
+            color: white;
+            font-size: 13px;
+            font-weight: 600;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            z-index: 1000;
+            cursor: pointer;
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
+            backdrop-filter: blur(10px);
+            transition: all 0.3s;
+        }
+
+        .logout-btn:hover {
+            background: rgba(200, 35, 51, 0.95);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.4);
+        }
     </style>
 </head>
 <body>
+    <button class="logout-btn" onclick="logout()">🔒 Logout</button>
     <div class="container">
         <div class="header">
             <h1>Case Analytics Dashboard</h1>
-            <p>Thomson Reuters - May 2026 Reporting Period</p>
+            <p>Thomson Reuters - 2026 Reporting Period</p>
         </div>
 
         <div class="stats-bar">
@@ -303,148 +334,18 @@
         </div>
     </div>
 
+    <script src="cases-data-embedded.js"></script>
     <script>
-    const casesData = [
-    {caseNumber:'23681350',account:'Waystone Governance Ltd',product:'Statutory Reporting',subject:'OAP || Problem : Data grid exports (Waystone)',status:'Work In Progress',openedDate:'5/14/2026',priority:'Medium',ageHours:288.18,ageDays:12,sla:' days  hours  mins'},
-    {caseNumber:'23681836',account:'ERNST & YOUNG SERVICES PTY LTD',product:'Trusts (AU)',subject:'OST || Request for import templates for all import types of AU Company Tax 2025.',status:'Fix Applied',openedDate:'5/14/2026',priority:'Medium',ageHours:285.06,ageDays:12,sla:'1 days 9 hours 33 mins'},
-    {caseNumber:'23725806',account:'STANWELL CORPORATION',product:'Corporate Tax',subject:'OCT || Calculation Error regarding DTA/DTL opening balance and deferred tax movement',status:'Fix Applied',openedDate:'5/20/2026',priority:'Medium',ageHours:139.89,ageDays:6,sla:'1 days 0 hours 32 mins'},
-    {caseNumber:'23747005',account:'BHP BILLITON GROUP OPERATIONS PTY',product:'Indirect Tax Compliance',subject:'OITC || Required access  for OITC QA',status:'Fix Applied',openedDate:'5/22/2026',priority:'Medium',ageHours:91.47,ageDays:4,sla:'0 days 2 hours 1 mins'},
-    {caseNumber:'23758001',account:'BHP BILLITON GROUP OPERATIONS PTY',product:'Indirect Tax Compliance',subject:'OITC || Unable to access to OITC',status:'Work In Progress',openedDate:'5/25/2026',priority:'Medium',ageHours:21.24,ageDays:1,sla:' days  hours  mins'},
-    {caseNumber:'23758000',account:'KPMG AUSTRALIAN SERVICES PTY',product:'Trust Tax',subject:'OST || OneSource Printing Error urgent',status:'Fix Applied',openedDate:'5/25/2026',priority:'Medium',ageHours:21.24,ageDays:1,sla:'0 days 2 hours 26 mins'},
-    {caseNumber:'23576231',account:'HALL & MELIA ACCOUNTANTS',product:'Fringe Benefits Tax',subject:'FBT - Database access not flowing through with other users',status:'Closed',openedDate:'5/1/2026',priority:'3 - Low',ageHours:1.24,ageDays:0,sla:' days  hours  mins'},
-    {caseNumber:'23576536',account:'ENVIRONMENT PROTECTION AUTHORITY',product:'Fringe Benefits Tax',subject:'FBT || Password reset',status:'Closed',openedDate:'5/1/2026',priority:'Medium',ageHours:0.23,ageDays:0,sla:' days  hours  mins'},
-    {caseNumber:'23576638',account:'UNITING NSW ACT',product:'Statutory Reporting',subject:'OSR || Password Reset',status:'Closed',openedDate:'5/1/2026',priority:'Medium',ageHours:0.44,ageDays:0,sla:' days  hours  mins'},
-    {caseNumber:'23576742',account:'DEPARTMENT OF TREASURY AND FINANCE',product:'Fringe Benefits Tax',subject:'FBT || User Creation',status:'Closed',openedDate:'5/1/2026',priority:'3 - Low',ageHours:1.05,ageDays:0,sla:' days  hours  mins'},
-    {caseNumber:'23577250',account:'UNITING (NSW.ACT)',product:'Statutory Reporting',subject:'OSR || Uniting | ONESOURCE Statutory Reporting | Closure meeting',status:'Closed',openedDate:'5/1/2026',priority:'Medium',ageHours:65,ageDays:3,sla:' days  hours  mins'},
-    {caseNumber:'23587503',account:'ENGENCO LIMITED',product:'Corporate Tax',subject:'OCT || Your Thomson Reuters Subscription(s) is Renewing for Account #1004673198',status:'Closed',openedDate:'5/4/2026',priority:'Medium',ageHours:26.51,ageDays:1,sla:'0 days 5 hours 49 mins'},
-    {caseNumber:'23588406',account:'ACUMENTIS GROUP LTD',product:'Fringe Benefits Tax',subject:'FBT || ONESOURCE FBT Web || 1004660648 - LANDMARK WHITE LTD',status:'Closed',openedDate:'5/4/2026',priority:'Medium',ageHours:56.45,ageDays:2,sla:'0 days 2 hours 30 mins'},
-    {caseNumber:'23587841',account:'Hancock Prospecting Pty Ltd',product:'Fringe Benefits Tax',subject:'FBT || Unlock Account Request',status:'Closed',openedDate:'5/4/2026',priority:'Medium',ageHours:0.55,ageDays:0,sla:' days  hours  mins'},
-    {caseNumber:'23587836',account:'CROWE HORWATH',product:'Corporate Tax',subject:'OCT ||  Dataset access issue',status:'Closed',openedDate:'5/4/2026',priority:'Medium',ageHours:0.65,ageDays:0,sla:'0 days 0 hours 5 mins'},
-    {caseNumber:'23587711',account:'THOMSON REUTERS AUSTRALIA PTY LTD',product:'Statutory Reporting',subject:'Canceled: OSR | ONEFORTYONE | Handover Meeting',status:'Closed',openedDate:'5/4/2026',priority:'Medium',ageHours:0.12,ageDays:0,sla:' days  hours  mins'},
-    {caseNumber:'23588395',account:'EPIROC AUSTRALIA PTY LTD',product:'Fringe Benefits Tax',subject:'FBT || Urgent: OneSource FBT',status:'Closed',openedDate:'5/4/2026',priority:'Medium',ageHours:167.32,ageDays:7,sla:' days  hours  mins'},
-    {caseNumber:'23645621',account:'Relx Australia Pty Ltd',product:'Fringe Benefits Tax',subject:'FBT | Account manager details  RELX AUSTRALIA PTY LTD (1004173333 )',status:'Closed',openedDate:'5/11/2026',priority:'Medium',ageHours:53.91,ageDays:2,sla:' days  hours  mins'},
-    {caseNumber:'23645755',account:'British American Tobacco',product:'Corporate Tax',subject:'OCT || Onesource Changed Mapping not reflected in Calculation',status:'Closed',openedDate:'5/11/2026',priority:'Medium',ageHours:77.69,ageDays:3,sla:'1 days 8 hours 29 mins'},
-    {caseNumber:'23645544',account:'QUEENSLAND ART GALLERY',product:'Statutory Reporting',subject:'OSR || Current Year Expression Issue || ADO : 701197',status:'Closed',openedDate:'5/11/2026',priority:'Medium',ageHours:72.26,ageDays:3,sla:'1 days 1 hours 41 mins'},
-    {caseNumber:'23645752',account:'CR KENNEDY & CO PTY LTD',product:'Fringe Benefits Tax',subject:'FBT || Please Unlock Our Account',status:'Closed',openedDate:'5/11/2026',priority:'Medium',ageHours:0.72,ageDays:0,sla:' days  hours  mins'},
-    {caseNumber:'23645783',account:'CR KENNEDY & CO PTY LTD',product:'Fringe Benefits Tax',subject:'FBT || Admin Access',status:'Closed',openedDate:'5/11/2026',priority:'3 - Low',ageHours:0.36,ageDays:0,sla:' days  hours  mins'},
-    {caseNumber:'23645499',account:'GOULBURN OVENS INSTITUTE OF TAFE',product:'Fringe Benefits Tax',subject:'FBT || Roll forward instructions one entity to another entity',status:'Closed',openedDate:'5/11/2026',priority:'Medium',ageHours:54.86,ageDays:2,sla:'0 days 0 hours 2 mins'},
-    {caseNumber:'23645611',account:'CORPORATE MARKET',product:'Corporate Tax',subject:'OCT || GE Australia entities list',status:'Closed',openedDate:'5/11/2026',priority:'Medium',ageHours:31.02,ageDays:1,sla:'0 days 6 hours 29 mins'},
-    {caseNumber:'23645792',account:'CR KENNEDY & CO PTY LTD',product:'Fringe Benefits Tax',subject:'FBT || User Creation',status:'Closed',openedDate:'5/11/2026',priority:'3 - Low',ageHours:0.2,ageDays:0,sla:' days  hours  mins'},
-    {caseNumber:'23646085',account:'DELOITTE SERVICES PTY LTD',product:'Trusts (AU)',subject:'OST || OneSource query',status:'Closed',openedDate:'5/11/2026',priority:'Medium',ageHours:28.67,ageDays:1,sla:'0 days 0 hours 29 mins'},
-    {caseNumber:'23646189',account:'UVEX SAFETY AUSTRALIA LIMITED',product:'Fringe Benefits Tax',subject:'FBT || ONESOURCE FBT Web || Renewal || 1004190256 - UVEX SAFETY AUSTRALIA LIMITED',status:'Closed',openedDate:'5/11/2026',priority:'Medium',ageHours:23.9,ageDays:1,sla:' days  hours  mins'},
-    {caseNumber:'23646566',account:'SEQ WATER',product:'Fringe Benefits Tax',subject:'FBT || Unable to roll forward our instance of One Source FBT',status:'Closed',openedDate:'5/11/2026',priority:'Medium',ageHours:48.06,ageDays:2,sla:' days  hours  mins'},
-    {caseNumber:'23658556',account:'KPMG AUSTRALIAN SERVICES PTY',product:'Trusts (AU)',subject:'OST || E-Filing error GACattlesub Tax return - 30/6/2025 || ADO : 702203',status:'Closed',openedDate:'5/12/2026',priority:'Medium',ageHours:153.34,ageDays:6,sla:' days  hours  mins'},
-    {caseNumber:'23658922',account:'THOMSON REUTERS AUSTRALIA PTY LTD',product:'Statutory Reporting',subject:'OSR || Password Reset - Training OSR',status:'Closed',openedDate:'5/12/2026',priority:'Medium',ageHours:0.29,ageDays:0,sla:' days  hours  mins'},
-    {caseNumber:'23658560',account:'DELOITTE SERVICES PTY LTD',product:'Trusts (AU)',subject:'OST || Onesource query 2 || CMN.ATO.GEN.430080',status:'Closed',openedDate:'5/12/2026',priority:'Medium',ageHours:56.57,ageDays:2,sla:'0 days 3 hours 36 mins'},
-    {caseNumber:'23658872',account:'ELECTRICITY NETWORKS CORPORATION',product:'Corporate Tax',subject:'OCT || Permission to unlock account',status:'Closed',openedDate:'5/12/2026',priority:'Medium',ageHours:0.1,ageDays:0,sla:' days  hours  mins'},
-    {caseNumber:'23658528',account:'DELOITTE SERVICES PTY LTD',product:'Trusts (AU)',subject:'OST || Onesource Query || SBR.GEN.AUTH.006',status:'Closed',openedDate:'5/12/2026',priority:'Medium',ageHours:80.43,ageDays:3,sla:'0 days 3 hours 15 mins'},
-    {caseNumber:'23658891',account:'IGO LTD',product:'Statutory Reporting',subject:'OSR || Password Reset',status:'Closed',openedDate:'5/12/2026',priority:'Medium',ageHours:1.22,ageDays:0,sla:'0 days 0 hours 36 mins'},
-    {caseNumber:'23659511',account:'ERNST & YOUNG SERVICES PTY LTD',product:'Trusts (AU)',subject:'OST || Colodusk No 2 Trust Onesource Error',status:'Closed',openedDate:'5/12/2026',priority:'Medium',ageHours:74.68,ageDays:3,sla:'0 days 1 hours 16 mins'},
-    {caseNumber:'23659296',account:'TOGA PTY LTD',product:'Corporate Tax',subject:'OCT || OneSource - tax return form error || Entities update',status:'Closed',openedDate:'5/12/2026',priority:'3 - Low',ageHours:52,ageDays:2,sla:'0 days 5 hours 36 mins'},
-    {caseNumber:'23659422',account:'UVEX SAFETY AUSTRALIA LIMITED',product:'Fringe Benefits Tax',subject:'FBT || Rollforward',status:'Closed',openedDate:'5/12/2026',priority:'3 - Low',ageHours:0.11,ageDays:0,sla:' days  hours  mins'},
-    {caseNumber:'23659469',account:'ERNST & YOUNG SERVICES PTY LTD',product:'Trusts (AU)',subject:'OST || [HIGH] EY | PEP | TRT business name issue.',status:'Closed',openedDate:'5/12/2026',priority:'Medium',ageHours:2.1,ageDays:0,sla:'0 days 0 hours 41 mins'},
-    {caseNumber:'23670392',account:'INDIGO SHIRE COUNCIL',product:'Fringe Benefits Tax',subject:'FBT || Locked account',status:'Closed',openedDate:'5/13/2026',priority:'Medium',ageHours:4.83,ageDays:0,sla:'0 days 0 hours 24 mins'},
-    {caseNumber:'23670391',account:'UNITY FUND SVCS',product:'Statutory Reporting',subject:'OSR || Request to reset password in OSR',status:'Closed',openedDate:'5/13/2026',priority:'Medium',ageHours:4.89,ageDays:0,sla:'0 days 0 hours 14 mins'},
-    {caseNumber:'23670405',account:'DELOITTE SERVICES PTY LTD',product:'Trusts (AU)',subject:'OST || Onesource error',status:'Closed',openedDate:'5/13/2026',priority:'Medium',ageHours:31.81,ageDays:1,sla:'0 days 7 hours 30 mins'},
-    {caseNumber:'23671039',account:'WESFARMERS LIMITED',product:'Fringe Benefits Tax',subject:'FBT || Reporting entities',status:'Closed',openedDate:'5/13/2026',priority:'Medium',ageHours:20.14,ageDays:1,sla:' days  hours  mins'},
-    {caseNumber:'23670605',account:'INDIGO SHIRE COUNCIL',product:'Fringe Benefits Tax',subject:'FBT || Access to learning resources within Help',status:'Closed',openedDate:'5/13/2026',priority:'Medium',ageHours:27,ageDays:1,sla:'0 days 4 hours 12 mins'},
-    {caseNumber:'23671012',account:'Ttf Bizcorp Holdings Unit Trust',product:'Fringe Benefits Tax',subject:'FBT OneSource',status:'Closed',openedDate:'5/13/2026',priority:'Medium',ageHours:20.35,ageDays:1,sla:' days  hours  mins'},
-    {caseNumber:'23670923',account:'RTC GRP',product:'Fringe Benefits Tax',subject:'FBT || Account Locked',status:'Closed',openedDate:'5/13/2026',priority:'Medium',ageHours:3.87,ageDays:0,sla:'0 days 1 hours 8 mins'},
-    {caseNumber:'23672175',account:'ERNST & YOUNG SERVICES PTY LTD',product:'Trusts (AU)',subject:'OST || [HIGH] EY | RBC | IDS validation error',status:'Closed',openedDate:'5/13/2026',priority:'Medium',ageHours:16.23,ageDays:1,sla:'0 days 0 hours 54 mins'},
-    {caseNumber:'23681249',account:'WESFARMERS LIMITED',product:'Fringe Benefits Tax',subject:'FBT || Error',status:'Closed',openedDate:'5/14/2026',priority:'3 - Low',ageHours:0.35,ageDays:0,sla:' days  hours  mins'},
-    {caseNumber:'23681072',account:'SONY INTERACTIVE ENTERTAINMENT',product:'Fringe Benefits Tax',subject:'FBT || Onesource FBT FY25',status:'Closed',openedDate:'5/14/2026',priority:'3 - Low',ageHours:105.54,ageDays:4,sla:'1 days 8 hours 34 mins'},
-    {caseNumber:'23681337',account:'CITIGROUP PTY LTD',product:'Trusts (AU)',subject:'OST || Read only issue',status:'Closed',openedDate:'5/14/2026',priority:'Medium',ageHours:0.29,ageDays:0,sla:'0 days 0 hours 8 mins'},
-    {caseNumber:'23681467',account:'CORPORATE MARKET',product:'Indirect Tax Compliance',subject:'OITC || Request for closing OITC implementation project',status:'Closed',openedDate:'5/14/2026',priority:'Medium',ageHours:3.02,ageDays:0,sla:' days  hours  mins'},
-    {caseNumber:'23681856',account:'MOONEE VALLEY RACING CLUB',product:'Fringe Benefits Tax',subject:'FBT || Moonee Valley Racing Club Ticket 236816666',status:'Closed',openedDate:'5/14/2026',priority:'Medium',ageHours:19.41,ageDays:1,sla:'0 days 19 hours 17 mins'},
-    {caseNumber:'23681666',account:'MOONEE VALLEY RACING CLUB',product:'Fringe Benefits Tax',subject:'FBT || Moonee Valley Racing Club',status:'Closed',openedDate:'5/14/2026',priority:'Medium',ageHours:0.09,ageDays:0,sla:' days  hours  mins'},
-    {caseNumber:'23681797',account:'BDO ADMINISTRATION PTY LTD',product:'Corporate Tax',subject:'OCT || OneSource Agency Fault Validation Error',status:'Closed',openedDate:'5/14/2026',priority:'Medium',ageHours:99.49,ageDays:4,sla:'0 days 4 hours 7 mins'},
-    {caseNumber:'23681825',account:'MOONEE VALLEY RACING CLUB',product:'Fringe Benefits Tax',subject:'FBT || No organisation available in the Fringe Benefits Tax application',status:'Closed',openedDate:'5/14/2026',priority:'Medium',ageHours:91.57,ageDays:4,sla:' days  hours  mins'},
-    {caseNumber:'23681826',account:'UGL LTD',product:'Fringe Benefits Tax',subject:'OneSource FBT - Unable to access E-filing',status:'Closed',openedDate:'5/14/2026',priority:'Medium',ageHours:2.77,ageDays:0,sla:'0 days 0 hours 36 mins'},
-    {caseNumber:'23681885',account:'RSM AUSTRALIA PTY LTD AS',product:'Corporate Tax',subject:'OCT || Log in problems Camila Cea',status:'Closed',openedDate:'5/14/2026',priority:'Medium',ageHours:0.72,ageDays:0,sla:' days  hours  mins'},
-    {caseNumber:'23681938',account:'ANGLICAN CHURCH GRAMMAR SCHOOL',product:'Fringe Benefits Tax',subject:'FBT technical support',status:'Closed',openedDate:'5/14/2026',priority:'Medium',ageHours:19.74,ageDays:1,sla:' days  hours  mins'},
-    {caseNumber:'23681977',account:'QUEENSLAND AUDIT OFFICE',product:'Fringe Benefits Tax',subject:'ONESOURCE FBT Web || Renewal || 1004187775 - QUEENSLAND AUDIT OFFICE',status:'Closed',openedDate:'5/14/2026',priority:'Medium',ageHours:19.59,ageDays:1,sla:' days  hours  mins'},
-    {caseNumber:'23682694',account:'PRICEWATERHOUSECOOPERS SVCS',product:'Corporate Tax',subject:'OCT || OCT Calculation and efiler history report',status:'Closed',openedDate:'5/14/2026',priority:'Medium',ageHours:0.83,ageDays:0,sla:' days  hours  mins'},
-    {caseNumber:'23692376',account:'HYPNOS PTY LTD',product:'Corporate Tax',subject:'OCT || User account locked',status:'Closed',openedDate:'5/15/2026',priority:'3 - Low',ageHours:2.34,ageDays:0,sla:' days  hours  mins'},
-    {caseNumber:'23692377',account:'LEVANDE',product:'Fringe Benefits Tax',subject:'FBT || Gurnoor, Upload Templates || ADO : 703627',status:'Closed',openedDate:'5/15/2026',priority:'Medium',ageHours:126.23,ageDays:5,sla:'4 days 22 hours 32 mins'},
-    {caseNumber:'23692293',account:'SEVEN NETWORK (OPERATIONS) LIMITED',product:'Fringe Benefits Tax',subject:'FBT || Locked account',status:'Closed',openedDate:'5/15/2026',priority:'Medium',ageHours:0.4,ageDays:0,sla:' days  hours  mins'},
-    {caseNumber:'23692789',account:'IP AUSTRALIA',product:'Fringe Benefits Tax',subject:'FBT || Urgent: Account Locked â€“ Access to ONESOURCE FBT [SEC=OFFICIAL]',status:'Closed',openedDate:'5/15/2026',priority:'Medium',ageHours:0.6,ageDays:0,sla:' days  hours  mins'},
-    {caseNumber:'23692728',account:'Kimberley Ports Authority',product:'Fringe Benefits Tax',subject:'FBT || PASSWORD RESET',status:'Closed',openedDate:'5/15/2026',priority:'Medium',ageHours:76.17,ageDays:3,sla:' days  hours  mins'},
-    {caseNumber:'23692561',account:'THOMSON REUTERS AUSTRALIA PTY LTD',product:'Fringe Benefits Tax',subject:'FBT || Siemens Energy FBT license update',status:'Closed',openedDate:'5/15/2026',priority:'Medium',ageHours:0.13,ageDays:0,sla:' days  hours  mins'},
-    {caseNumber:'23693106',account:'BDO ADMINISTRATION PTY LTD',product:'Corporate Tax',subject:'OCT || Issue with Q4 Interposed Entity Election not showing',status:'Closed',openedDate:'5/15/2026',priority:'Medium',ageHours:75.7,ageDays:3,sla:'0 days 3 hours 25 mins'},
-    {caseNumber:'23693406',account:'DIGITAL SUPPORT',product:'Fringe Benefits Tax',subject:'FBT || URGENT - OneSource FBT NOT calculating tax correctly || GSI : 23670696 || ADO : 702172',status:'Closed',openedDate:'5/15/2026',priority:'Medium',ageHours:1.72,ageDays:0,sla:' days  hours  mins'},
-    {caseNumber:'23703926',account:'DIGITAL SUPPORT',product:'Fringe Benefits Tax',subject:'FBT || Reportable Fringe Benefit Amount 2026 || ADO : 703625',status:'Closed',openedDate:'5/18/2026',priority:'Medium',ageHours:55.65,ageDays:2,sla:' days  hours  mins'},
-    {caseNumber:'23704047',account:'AMP SERVICES LTD',product:'Fringe Benefits Tax',subject:'FBT || payable report',status:'Closed',openedDate:'5/18/2026',priority:'Medium',ageHours:55.18,ageDays:2,sla:'1 days 7 hours 40 mins'},
-    {caseNumber:'23704407',account:'ECONOMIC REGULATION AUTHORITY',product:'Fringe Benefits Tax',subject:'FBT || ATO form incorrect dates || ADO : 704083',status:'Closed',openedDate:'5/18/2026',priority:'Medium',ageHours:172.13,ageDays:7,sla:'3 days 3 hours 42 mins'},
-    {caseNumber:'23704097',account:'SRLA',product:'Fringe Benefits Tax',subject:'FBT || Getting error when trying to generate tax return [SEC=OFFICIAL]',status:'Closed',openedDate:'5/18/2026',priority:'Medium',ageHours:30.91,ageDays:1,sla:' days  hours  mins'},
-    {caseNumber:'23704118',account:'TPG TELECOM LIMITED',product:'Fringe Benefits Tax',subject:'FBT || Roll Forward',status:'Closed',openedDate:'5/18/2026',priority:'3 - Low',ageHours:0.15,ageDays:0,sla:' days  hours  mins'},
-    {caseNumber:'23704352',account:'CITY OF STIRLING',product:'Fringe Benefits Tax',subject:'FBT || City of Stirling/TR - ONESOURCE FBT',status:'Closed',openedDate:'5/18/2026',priority:'Medium',ageHours:4.01,ageDays:0,sla:' days  hours  mins'},
-    {caseNumber:'23704110',account:'TPG TELECOM LIMITED',product:'Fringe Benefits Tax',subject:'FBT technical issue - OneSource',status:'Closed',openedDate:'5/18/2026',priority:'Medium',ageHours:0.29,ageDays:0,sla:' days  hours  mins'},
-    {caseNumber:'23704322',account:'STATE STREET CORPORATION',product:'Indirect Tax Compliance',subject:'OITC || Accidentally deleted dataset',status:'Closed',openedDate:'5/18/2026',priority:'Medium',ageHours:1.61,ageDays:0,sla:' days  hours  mins'},
-    {caseNumber:'23704639',account:'CITIGROUP PTY LTD',product:'Trusts (AU)',subject:'OST || AA02 - Aberdeen Standard Investment Australia Limited - Gross and offsets - C tab (Urgent)',status:'Closed',openedDate:'5/18/2026',priority:'Medium',ageHours:22.47,ageDays:1,sla:'0 days 6 hours 29 mins'},
-    {caseNumber:'23704698',account:'STANWELL CORPORATION',product:'Corporate Tax',subject:'OCT || OneSource Corporate Tax Calculation Errors - Cell deleted',status:'Closed',openedDate:'5/18/2026',priority:'Medium',ageHours:0.1,ageDays:0,sla:' days  hours  mins'},
-    {caseNumber:'23704611',account:'TETRA PAK MARKETING LTD',product:'Fringe Benefits Tax',subject:'FBT || Access',status:'Closed',openedDate:'5/18/2026',priority:'Medium',ageHours:27.07,ageDays:1,sla:' days  hours  mins'},
-    {caseNumber:'23704983',account:'SEVEN NETWORK (OPERATIONS) LIMITED',product:'Fringe Benefits Tax',subject:'FBT || Urgent - Onesource account has been locked',status:'Closed',openedDate:'5/18/2026',priority:'Medium',ageHours:1.31,ageDays:0,sla:' days  hours  mins'},
-    {caseNumber:'23714411',account:'KPMG TAX SERVICES SDN. BHD',product:'Corporate Tax',subject:'OCT || Sort Required Error (Pelipikan Plantation Sdn Bhd)',status:'Closed',openedDate:'5/19/2026',priority:'Medium',ageHours:22.85,ageDays:1,sla:'0 days 8 hours 34 mins'},
-    {caseNumber:'23714391',account:'QUEENSLAND DEPARTMENT OF TRANSPORT',product:'Fringe Benefits Tax',subject:'FBT || Upload more than 10, 000 lines',status:'Closed',openedDate:'5/19/2026',priority:'Medium',ageHours:3.62,ageDays:0,sla:' days  hours  mins'},
-    {caseNumber:'23714813',account:'MACKAY SUGAR LTD',product:'Fringe Benefits Tax',subject:'FBT || Electric vehicle',status:'Closed',openedDate:'5/19/2026',priority:'Medium',ageHours:27.35,ageDays:1,sla:'0 days 5 hours 45 mins'},
-    {caseNumber:'23714854',account:'JONES LANG LASALLE LTD',product:'Statutory Reporting',subject:'OAP || Error',status:'Closed',openedDate:'5/19/2026',priority:'Medium',ageHours:45.41,ageDays:2,sla:' days  hours  mins'},
-    {caseNumber:'23714518',account:'TOYOTA FINANCE AUST LTD',product:'Fringe Benefits Tax',subject:'FBT || Please add user to Toyota Finance Australia Ltd Onesource FBT System',status:'Closed',openedDate:'5/19/2026',priority:'Medium',ageHours:2.27,ageDays:0,sla:'0 days 0 hours 29 mins'},
-    {caseNumber:'23714832',account:'TOYOTA FINANCE AUST LTD',product:'Fringe Benefits Tax',subject:'FBT || Roll Forward',status:'Closed',openedDate:'5/19/2026',priority:'3 - Low',ageHours:0.12,ageDays:0,sla:' days  hours  mins'},
-    {caseNumber:'23715201',account:'Independent Education Union of Australia',product:'Fringe Benefits Tax',subject:'FBT || ATO return - reporting entity count',status:'Closed',openedDate:'5/19/2026',priority:'Medium',ageHours:18.69,ageDays:1,sla:' days  hours  mins'},
-    {caseNumber:'23714996',account:'MOTT MACDONALD AUSTRALIA PTY LTD',product:'Fringe Benefits Tax',subject:'FBT || Mott MacDonald Australia - E-filing manager error || DB Team : 23716761',status:'Closed',openedDate:'5/19/2026',priority:'Medium',ageHours:50.3,ageDays:2,sla:'1 days 3 hours 13 mins'},
-    {caseNumber:'23715355',account:'NEXA PERTH',product:'Fringe Benefits Tax',subject:'FBT - Validation',status:'Closed',openedDate:'5/19/2026',priority:'Medium',ageHours:24.87,ageDays:1,sla:'0 days 1 hours 16 mins'},
-    {caseNumber:'23715296',account:'ACT AUDIT OFFICE',product:'Fringe Benefits Tax',subject:'FBT || Unblock Onesource account',status:'Closed',openedDate:'5/19/2026',priority:'Medium',ageHours:18.84,ageDays:1,sla:'0 days 1 hours 32 mins'},
-    {caseNumber:'23715053',account:'TRONOX MANAGEMENT PTY LTD',product:'Corporate Tax',subject:'OCT || ATO form error message',status:'Closed',openedDate:'5/19/2026',priority:'Medium',ageHours:50.2,ageDays:2,sla:'0 days 20 hours 21 mins'},
-    {caseNumber:'23715646',account:'BAKER HUGHES AUSTRALIA PTY LTD',product:'Corporate Tax',subject:'OCT || PS0048 - Enquiry Onesource Corporate Tax',status:'Closed',openedDate:'5/19/2026',priority:'Medium',ageHours:44.35,ageDays:2,sla:'0 days 23 hours 53 mins'},
-    {caseNumber:'23715803',account:'BDO ADMINISTRATION PTY LTD',product:'Fringe Benefits Tax',subject:'FBT || ONESOURCE FBT module - extra licenses',status:'Closed',openedDate:'5/19/2026',priority:'Medium',ageHours:16.57,ageDays:1,sla:'0 days 16 hours 21 mins'},
-    {caseNumber:'23715252',account:'ERNST & YOUNG SERVICES PTY LTD',product:'Trusts (AU)',subject:'OST || Timeline for ATO 2026 Stationery',status:'Closed',openedDate:'5/19/2026',priority:'Medium',ageHours:19.07,ageDays:1,sla:'0 days 1 hours 48 mins'},
-    {caseNumber:'23724950',account:'CENTURIA CAPITAL LIMITED',product:'Statutory Reporting',subject:'OSR || Issue with OneSource Statutory Reporting Access',status:'Closed',openedDate:'5/20/2026',priority:'Medium',ageHours:0.37,ageDays:0,sla:'0 days 0 hours 7 mins'},
-    {caseNumber:'23725071',account:'DEPARTMENT OF PARKS AND WILDLIFE',product:'Fringe Benefits Tax',subject:'FBT || Receipt download',status:'Closed',openedDate:'5/20/2026',priority:'Medium',ageHours:1.2,ageDays:0,sla:' days  hours  mins'},
-    {caseNumber:'23725119',account:'AVIAGEN AUSTRALIA',product:'Fringe Benefits Tax',subject:'FBT ||  SBR.GEN.AUTH.006',status:'Closed',openedDate:'5/20/2026',priority:'3 - Low',ageHours:29.59,ageDays:1,sla:'0 days 6 hours 12 mins'},
-    {caseNumber:'23724923',account:'AVIAGEN AUSTRALIA',product:'Fringe Benefits Tax',subject:'FBT || help with e file',status:'Closed',openedDate:'5/20/2026',priority:'Medium',ageHours:7.72,ageDays:0,sla:'0 days 0 hours 40 mins'},
-    {caseNumber:'23725571',account:'INDIGO SHIRE COUNCIL',product:'Corporate Tax',subject:'FBT ||  Forgot password',status:'Closed',openedDate:'5/20/2026',priority:'Medium',ageHours:0.52,ageDays:0,sla:'0 days 0 hours 17 mins'},
-    {caseNumber:'23725038',account:'IP AUSTRALIA',product:'Fringe Benefits Tax',subject:'FBT || Cannot log in - https://apac1.onesourcetax.com/home [SEC=OFFICIAL]',status:'Closed',openedDate:'5/20/2026',priority:'Medium',ageHours:3.57,ageDays:0,sla:'0 days 0 hours 28 mins'},
-    {caseNumber:'23726577',account:'MOTT MACDONALD AUSTRALIA PTY LTD',product:'Fringe Benefits Tax',subject:'FBT || SBR.GEN.AUTH.006',status:'Closed',openedDate:'5/20/2026',priority:'3 - Low',ageHours:23.14,ageDays:1,sla:'0 days 0 hours 3 mins'},
-    {caseNumber:'23726212',account:'SAVOY MANAGEMENT PTY LTD',product:'Fringe Benefits Tax',subject:'FBT || Urgent Login Issue -ONESOURCE FBT 2025-2026',status:'Closed',openedDate:'5/20/2026',priority:'3 - Low',ageHours:18.71,ageDays:1,sla:'0 days 0 hours 40 mins'},
-    {caseNumber:'23726320',account:'TR Eikon Hosting Centre',product:'Statutory Reporting',subject:'OSR || URGENT - Password reset',status:'Closed',openedDate:'5/20/2026',priority:'Medium',ageHours:0.37,ageDays:0,sla:' days  hours  mins'},
-    {caseNumber:'23735712',account:'BAKER HUGHES AUSTRALIA PTY LTD',product:'Corporate Tax',subject:'OCT || Year of Return Invalid',status:'Closed',openedDate:'5/21/2026',priority:'3 - Low',ageHours:0.9,ageDays:0,sla:'0 days 0 hours 18 mins'},
-    {caseNumber:'23735505',account:'BDO',product:'Corporate Tax',subject:'OCT || Tax return query',status:'Closed',openedDate:'5/21/2026',priority:'Medium',ageHours:30.23,ageDays:1,sla:'0 days 4 hours 57 mins'},
-    {caseNumber:'23735939',account:'MOTT MACDONALD AUSTRALIA PTY LTD',product:'ONESOURCE',subject:'FBT || How to EFILE',status:'Closed',openedDate:'5/21/2026',priority:'3 - Low',ageHours:3.97,ageDays:0,sla:'0 days 0 hours 14 mins'},
-    {caseNumber:'23735552',account:'SAN REMO MACARONI COMPANY PTY LTD',product:'Fringe Benefits Tax',subject:'FBT - San Remo Macaroni Pty Ltd - FBT / Unlock account/reset password    [ ref:!00D300pLSL.!500PA0iGpep:ref ]',status:'Closed',openedDate:'5/21/2026',priority:'3 - Low',ageHours:6.8,ageDays:0,sla:'0 days 0 hours 54 mins'},
-    {caseNumber:'23735946',account:'BOARD OF TRUSTEES OF THE',product:'ONESOURCE',subject:'FBT || Rockhampton Grammar School - ATO Return',status:'Closed',openedDate:'5/21/2026',priority:'Medium',ageHours:3.68,ageDays:0,sla:'0 days 1 hours 11 mins'},
-    {caseNumber:'23735508',account:'SCHINDLER LIFTS AUSTRALIA PTY LTD',product:'ONESOURCE',subject:'FBT || Teams Call Link to be Sent to Karen Robertson - Schindler Lifts Australia',status:'Closed',openedDate:'5/21/2026',priority:'Medium',ageHours:0.11,ageDays:0,sla:' days  hours  mins'},
-    {caseNumber:'23735573',account:'GRIFFITH UNIVERSITY',product:'ONESOURCE',subject:'FBT || Griffit Uni Onesource Tax - Unable to login',status:'Closed',openedDate:'5/21/2026',priority:'Medium',ageHours:0.61,ageDays:0,sla:'0 days 0 hours 19 mins'},
-    {caseNumber:'23735587',account:'UNIVERSAL MUSIC AUSTRALIA PTY',product:'ONESOURCE',subject:'FBT || Administrator access',status:'Closed',openedDate:'5/21/2026',priority:'Medium',ageHours:6.47,ageDays:0,sla:'0 days 2 hours 15 mins'},
-    {caseNumber:'23736101',account:'ALBURY WODONGA HEALTH',product:'ONESOURCE',subject:'FBT || Receipt',status:'Closed',openedDate:'5/21/2026',priority:'Medium',ageHours:0.16,ageDays:0,sla:' days  hours  mins'},
-    {caseNumber:'23736934',account:'HLB MANN JUDD (NSW) PTY LTD',product:'Trust Tax',subject:'OST || Validation Error while lodging a Tax return',status:'Closed',openedDate:'5/21/2026',priority:'Medium',ageHours:97.89,ageDays:4,sla:'0 days 1 hours 38 mins'},
-    {caseNumber:'23746010',account:'BAKER HUGHES AUSTRALIA PTY LTD',product:'Corporate Tax',subject:'OCT || Applications not showing',status:'Closed',openedDate:'5/22/2026',priority:'Medium',ageHours:72.53,ageDays:3,sla:'0 days 7 hours 48 mins'},
-    {caseNumber:'23746007',account:'CENTURIA CAPITAL LIMITED',product:'Statutory Reporting',subject:'OSR || Onesource platform access error',status:'Closed',openedDate:'5/22/2026',priority:'Medium',ageHours:1.83,ageDays:0,sla:' days  hours  mins'},
-    {caseNumber:'23745936',account:'Deloitte Tax Services Sdn Bhd',product:'Corporate Tax',subject:'OCT || ONESOURCE ISSUE',status:'Closed',openedDate:'5/22/2026',priority:'Medium',ageHours:2.18,ageDays:0,sla:' days  hours  mins'},
-    {caseNumber:'23745992',account:'NEXA PERTH',product:'ONESOURCE',subject:'FBT || OneSource - FBT Validation Error',status:'Closed',openedDate:'5/22/2026',priority:'Medium',ageHours:80.47,ageDays:3,sla:'0 days 4 hours 16 mins'},
-    {caseNumber:'23746055',account:'DEPT OF FOREIGN AFFAIRS & TRADE',product:'ONESOURCE',subject:'FBT || Onesource outage [SEC=OFFICIAL]',status:'Closed',openedDate:'5/22/2026',priority:'Medium',ageHours:2.46,ageDays:0,sla:' days  hours  mins'},
-    {caseNumber:'23745919',account:'KPMG TAX SERVICES SDN. BHD',product:'Corporate Tax',subject:'OCT || URGENT | Thomson Reuters OneSource Corporate Tax | Loading Failure | Malaysia Office',status:'Closed',openedDate:'5/22/2026',priority:'Medium',ageHours:2.95,ageDays:0,sla:' days  hours  mins'},
-    {caseNumber:'23745921',account:'EBOS GRP PTY LTD',product:'Indirect Tax Compliance',subject:'OITC || OneSource - Error - Log in',status:'Closed',openedDate:'5/22/2026',priority:'Medium',ageHours:3.21,ageDays:0,sla:' days  hours  mins'},
-    {caseNumber:'23745953',account:'VIALTO PARTNERS AUSTRALIA 2 PTY LTD',product:'Corporate Tax',subject:'OCT || OneSource account locked',status:'Closed',openedDate:'5/22/2026',priority:'3 - Low',ageHours:80.32,ageDays:3,sla:'2 days 23 hours 38 mins'},
-    {caseNumber:'23745998',account:'THOMSON REUTERS AUSTRALIA PTY LTD',product:'Indirect Tax Compliance',subject:'OITC || URGENT - instance down',status:'Closed',openedDate:'5/22/2026',priority:'Medium',ageHours:1.86,ageDays:0,sla:' days  hours  mins'},
-    {caseNumber:'23746015',account:'STATE STREET AUSTRALIA LTD',product:'Trust Tax',subject:'OST || Portal is down!',status:'Closed',openedDate:'5/22/2026',priority:'Medium',ageHours:3.23,ageDays:0,sla:' days  hours  mins'},
-    {caseNumber:'23745926',account:'BDO ADMINISTRATION PTY LTD',product:'Trust Tax',subject:'OST || OneSource login issue',status:'Closed',openedDate:'5/22/2026',priority:'Medium',ageHours:80.49,ageDays:3,sla:' days  hours  mins'},
-    {caseNumber:'23746172',account:'RACWA HOLDINGS PTY LTD',product:'Statutory Reporting',subject:'OSR || Log in',status:'Closed',openedDate:'5/22/2026',priority:'Medium',ageHours:0.69,ageDays:0,sla:' days  hours  mins'},
-    {caseNumber:'23745918',account:'DEPT OF TREASURY & FINANCE',product:'ONESOURCE',subject:'FBT || URGENT Error when trying top log on and access the FBT calculations',status:'Closed',openedDate:'5/22/2026',priority:'Medium',ageHours:2.29,ageDays:0,sla:' days  hours  mins'},
-    {caseNumber:'23745928',account:'GEORGE WESTON FOODS LTD',product:'ONESOURCE',subject:'FBT || Onesource failed to load--please investigate',status:'Closed',openedDate:'5/22/2026',priority:'Medium',ageHours:3.61,ageDays:0,sla:' days  hours  mins'},
-    {caseNumber:'23746109',account:'TELSTRA LIMITED',product:'ONESOURCE',subject:'FBT || Onesource issue',status:'Closed',openedDate:'5/22/2026',priority:'Medium',ageHours:0.99,ageDays:0,sla:' days  hours  mins'},
-    {caseNumber:'23745939',account:'BDO GROUP HOLDINGS LIMITED',product:'Corporate Tax',subject:'OCT || OneSource not loading',status:'Closed',openedDate:'5/22/2026',priority:'Medium',ageHours:6.72,ageDays:0,sla:' days  hours  mins'},
-    {caseNumber:'23746014',account:'GRANT THORNTON NEW ZEALAND LTD',product:'Statutory Reporting',subject:'OSR || OneSource Access',status:'Closed',openedDate:'5/22/2026',priority:'Medium',ageHours:1.72,ageDays:0,sla:' days  hours  mins'},
-    {caseNumber:'23746098',account:'FEDERATION CUSTODIAN PTY LTD',product:'Corporate Tax',subject:'OCT || ONESOURCE Corp - fails to load',status:'Closed',openedDate:'5/22/2026',priority:'Medium',ageHours:3.31,ageDays:0,sla:' days  hours  mins'},
-    {caseNumber:'23746084',account:'DEPARTMENT OF CORPORATE',product:'ONESOURCE',subject:'FBT || Urgent - FBT  Account number 1004147980 â€“ License 42110040 - Log on fails',status:'Closed',openedDate:'5/22/2026',priority:'Medium',ageHours:1.79,ageDays:0,sla:' days  hours  mins'},
-    {caseNumber:'23757655',account:'VEOLIA ENVIRONMENTAL SERVICES',product:'Corporate Tax',subject:'OCT || Access- required_Corporate tax',status:'Closed',openedDate:'5/25/2026',priority:'Medium',ageHours:22.16,ageDays:1,sla:'0 days 0 hours 19 mins'},
-    {caseNumber:'23758009',account:'Parliamentary Svcs Dept of Western Australia',product:'ONESOURCE',subject:'FBT || D Shinner not authorised in efiling manager',status:'Closed',openedDate:'5/25/2026',priority:'Medium',ageHours:4.22,ageDays:0,sla:' days  hours  mins'},
-    {caseNumber:'23758129',account:'WISETECH GLOBAL',product:'Corporate Tax',subject:'OCT || ONESOURCE Corporate Tax Login',status:'Closed',openedDate:'5/25/2026',priority:'3 - Low',ageHours:3.45,ageDays:0,sla:'0 days 1 hours 36 mins'}
-];
-
-
     let selectedProducts = new Set();
     const productsDiv = document.getElementById('products');
     const viewBtn = document.getElementById('viewBtn');
+
+    function logout() {
+        if (confirm('Are you sure you want to logout?')) {
+            sessionStorage.removeItem('dashboardAuth');
+            window.location.href = 'login.html';
+        }
+    }
 
     // Count products
     const productCounts = {};
@@ -515,7 +416,7 @@
     function viewAllCases() {
         localStorage.removeItem('selectedProducts');
         window.location.href = 'professional-dashboard.html';
-    }
-    </script>
+    }</script>
 </body>
 </html>
+
